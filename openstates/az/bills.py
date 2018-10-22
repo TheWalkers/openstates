@@ -69,7 +69,9 @@ class AZBillScraper(Scraper):
                 if not url.startswith('http'):
                     url = 'https://apps.azleg.gov{}'.format(url)
 
-                if type_ == 'Bill Versions':
+                version_types = ['Bill Versions', 'Adopted Amendments', 'Proposed Floor Amendments']
+
+                if type_ in version_types:
                     bill.add_version_link(
                         note=doc['DocumentName'],
                         url=url,
