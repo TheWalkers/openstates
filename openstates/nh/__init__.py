@@ -1,6 +1,6 @@
 from pupa.scrape import Jurisdiction, Organization
-# from .people import NHPersonScraper
-# from .committees import NHCommitteeScraper
+from .people import NHPersonScraper
+from .committees import NHCommitteeScraper
 from .bills import NHBillScraper
 
 
@@ -10,8 +10,8 @@ class NewHampshire(Jurisdiction):
     name = "New Hampshire"
     url = "TODO"
     scrapers = {
-        # 'people': NHPersonScraper,
-        # 'committees': NHCommitteeScraper,
+        'people': NHPersonScraper,
+        'committees': NHCommitteeScraper,
         'bills': NHBillScraper,
     }
     legislative_sessions = [

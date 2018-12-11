@@ -1,8 +1,8 @@
 from pupa.scrape import Jurisdiction, Organization
 
 from openstates.utils.lxmlize import url_xpath
-# from .people import MTPersonScraper
-# from .committees import MTCommitteeScraper
+from .people import MTPersonScraper
+from .committees import MTCommitteeScraper
 from .bills import MTBillScraper
 
 
@@ -12,8 +12,8 @@ class Montana(Jurisdiction):
     name = "Montana"
     url = "http://leg.mt.gov/"
     scrapers = {
-        # 'people': MTPersonScraper,
-        # 'committees': MTCommitteeScraper,
+        'people': MTPersonScraper,
+        'committees': MTCommitteeScraper,
         'bills': MTBillScraper,
     }
     legislative_sessions = [
