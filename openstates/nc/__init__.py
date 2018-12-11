@@ -169,7 +169,7 @@ class NorthCarolina(Jurisdiction):
         from openstates.utils.lxmlize import url_xpath
         # This is the URL that populates the session `<select>` in the
         # state homepage header navigation
-        return url_xpath('https://www.ncleg.net/webservices/api/sessionselectlist/false',
+        return url_xpath('https://webservices.ncleg.net/sessionselectlist/false',
                          '//option/text()')
 
     def extract_text(self, doc, data):
