@@ -141,7 +141,7 @@ class Indiana(Jurisdiction):
 
     def get_session_list(self):
         apikey = os.environ['INDIANA_API_KEY']
-        headers = {"Authorization": apikey,
+        headers = {"Authorization": "Token " + apikey,
                    "Accept": "application/json"}
         resp = requests.get("https://api.iga.in.gov/sessions", headers=headers)
         resp.raise_for_status()

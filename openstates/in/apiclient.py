@@ -5,7 +5,7 @@ import functools
 
 """
 API key must be passed as a header. You need the following headers to get JSON:
-Authorization = your_apikey
+Authorization = Token your_apikey
 Accept = "application/json"
 
 If you're trying to hit api links through your browser you
@@ -72,7 +72,7 @@ class ApiClient(object):
     @check_response
     def geturl(self, url):
         headers = {}
-        headers['Authorization'] = self.apikey
+        headers['Authorization'] = "Token " + self.apikey
         headers['Accept'] = "application/json"
         self.scraper.info('Api GET next page: %r, %r' % (url, headers))
         return self.scraper.get(url, headers=headers)
@@ -80,7 +80,7 @@ class ApiClient(object):
     @check_response
     def get_relurl(self, url):
         headers = {}
-        headers['Authorization'] = self.apikey
+        headers['Authorization'] = "Token " + self.apikey
         headers['Accept'] = "application/json"
         url = urljoin(self.root, url)
         self.scraper.info('Api GET: %r, %r' % (url, headers))
@@ -105,7 +105,7 @@ class ApiClient(object):
         requests_args = requests_args or ()
         requests_kwargs = requests_kwargs or {}
         headers = requests_kwargs.get('headers', {})
-        headers['Authorization'] = self.apikey
+        headers['Authorization'] = "Token " + self.apikey
         headers['Accept'] = "application/json"
         requests_kwargs['headers'] = headers
 
