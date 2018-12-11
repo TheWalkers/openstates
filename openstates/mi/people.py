@@ -113,7 +113,8 @@ class MIPersonScraper(Scraper):
                     self.head(url_to_append + surname[0] + '.jpg')
                     photo_url = url_to_append + surname[0] + '.jpg'
                 except scrapelib.HTTPError:
-                    photo_url = None
+                    photo_url = ''
+                    self.warning('no photo url for %s', name)
 
             if name == 'Vacant':
                 self.info('district %s is vacant', district)
