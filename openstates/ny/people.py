@@ -455,17 +455,18 @@ class NYPersonScraper(Scraper, LXMLMixin):
             address.pop()
 
             fax = None
-            if address[-1].startswith("Fax: "):
+            if address and address[-1].startswith("Fax: "):
                 fax = address.pop().replace("Fax: ", "")
 
             phone = None
-            if re.search(r'\d{3}[-\s]?\d{3}[-\s]?\d{4}', address[-1]):
+            if address and re.search(r'\d{3}[-\s]?\d{3}[-\s]?\d{4}', address[-1]):
                 phone = address.pop()
 
             address = '\n'.join(address)
 
-            person.add_contact_detail(type='address', value=address,
-                                      note=office_type + ' Office')
+            if address:
+                person.add_contact_detail(type='address', value=address,
+                                          note=office_type + ' Office')
             if phone:
                 person.add_contact_detail(type='voice', value=phone,
                                           note=office_type + ' Office')
