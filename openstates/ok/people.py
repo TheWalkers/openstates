@@ -233,11 +233,12 @@ class OKPersonScraper(Scraper, LXMLMixin, LXMLMixinOK):
             self.warning('invalid bio page for %s', person)
             return
 
-        col2 = None
+        cells = iter(table.xpath('tr[2]/td'))
+        col1 = next(cells)
         try:
-            col1, col2 = table.xpath('tr[2]/td')
-        except ValueError:
-            col1, = table.xpath('tr[2]/td')
+            col2 = next(cells)
+        except StopIteration:
+            col2 = None
 
         lxml.etree.strip_tags(col1, 'sup')
         capitol_office_info = self._clean_office_info(col1)
