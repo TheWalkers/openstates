@@ -52,18 +52,16 @@ class SouthCarolina(Jurisdiction):
             "name": "2017-2018 Regular Session",
             "start_date": "2017-01-10"
         },
-        # TODO: Uncomment this when they start posting
-        # {
-        #     "_scraped_name": "123 - (2019-2020)",
-        #     "classification": "primary",
-        #     "end_date": "2019-05-09",
-        #     "identifier": "2019-2020",
-        #     "name": "2019-2020 Regular Session",
-        #     "start_date": "2019-01-09"
-        # }
+        {
+            "_scraped_name": "123 - (2019-2020)",
+            "classification": "primary",
+            "end_date": "2019-05-09",
+            "identifier": "2019-2020",
+            "name": "2019-2020 Regular Session",
+            "start_date": "2019-01-09"
+        }
     ]
     ignored_scraped_sessions = [
-        "123 - (2019-2020)",
         "118 - (2009-2010)",
         "117 - (2007-2008)",
         "116 - (2005-2006)",
@@ -87,28 +85,13 @@ class SouthCarolina(Jurisdiction):
     def get_organizations(self):
         """ generator to obtain organization data. """
         legislature_name = "South Carolina Legislature"
-        lower_chamber_name = "House"
-        lower_seats = 124
-        lower_title = "Representative"
-        upper_chamber_name = "Senate"
-        upper_seats = 46
-        upper_title = "Senator"
 
         legislature = Organization(name=legislature_name,
                                    classification="legislature")
-        upper = Organization(upper_chamber_name, classification='upper',
+        upper = Organization('Senate', classification='upper',
                              parent_id=legislature._id)
-        lower = Organization(lower_chamber_name, classification='lower',
+        lower = Organization('House', classification='lower',
                              parent_id=legislature._id)
-
-        for n in range(1, upper_seats + 1):
-            upper.add_post(
-                label=str(n), role=upper_title,
-                division_id='{}/sldu:{}'.format(self.division_id, n))
-        for n in range(1, lower_seats + 1):
-            lower.add_post(
-                label=str(n), role=lower_title,
-                division_id='{}/sldl:{}'.format(self.division_id, n))
 
         yield legislature
         yield upper
