@@ -14,6 +14,7 @@ SESSION_NUMBERS = {
     '2013': '63rd',
     '2015': '64th',
     '2017': '65th',
+    '2019': '66th',
 }
 
 
@@ -38,18 +39,23 @@ class MTPersonScraper(Scraper):
         chambers = [chamber] if chamber else ['upper', 'lower']
 
         for chamber in chambers:
-            url = 'http://leg.mt.gov/content/sessions/{}/{}{}Members.txt'.format(
-                session_number, session, 'Senate' if chamber == 'upper' else 'House'
-            )
+            if session_number >= '2019':
+                url = 'https://leg.mt.gov/legislator-information/csv'
+
+            else:
+                url = 'http://leg.mt.gov/content/sessions/{}/{}{}Members.txt'.format(
+                    session_number, session, 'Senate' if chamber == 'upper' else 'House'
+                )
             yield from self.scrape_legislators(url, chamber=chamber)
 
     def scrape_legislators(self, url, chamber):
+        district_type = {'upper': "SD", 'lower': "HD"}[chamber]
         data = self.get(url).text
         data = data.replace('"""', '"')  # weird triple quotes
         data = data.splitlines()
 
         fieldnames = ['last_name', 'first_name', 'party', 'district',
-                      'address', 'city', 'state', 'zip']
+                      'address', 'city', 'state', 'zip', 'email']
         csv_parser = csv.DictReader(data, fieldnames)
 
         district_leg_urls = self._district_legislator_dict()
@@ -65,6 +71,9 @@ class MTPersonScraper(Scraper):
             district = entry['district']
             hd_or_sd, district = district.split()
 
+            if hd_or_sd != district_type:
+                continue
+
             # Party.
             party_letter = entry['party']
             party = {'D': 'Democratic', 'R': 'Republican'}[party_letter]
@@ -75,6 +84,8 @@ class MTPersonScraper(Scraper):
 
             legislator = Person(name=fullname, primary_org=chamber, district=district,
                                 party=party, image=entry.get('photo_url', ''))
+            legislator.extras['given_name'] = entry['first_name'].title()
+            legislator.extras['family_name'] = entry['last_name'].title()
             legislator.add_source(url)
 
             # Get any info at the legislator's detail_url.
@@ -97,7 +108,7 @@ class MTPersonScraper(Scraper):
 
             # Get the office.
             address = '\n'.join([
-                entry['address'],
+                ' '.join([w.title() for w in entry['address'].split(' ') if w != 'PO']),
                 '%s, %s %s' % (entry['city'].title(), entry['state'], entry['zip'])
                 ])
             legislator.add_contact_detail(type='address', value=address, note='District Office')
@@ -109,7 +120,7 @@ class MTPersonScraper(Scraper):
                 legislator.add_contact_detail(type='voice', value=phone, note='District Office')
             if fax:
                 legislator.add_contact_detail(type='fax', value=fax, note='District Office')
-            if email:
+            if email and re.match(r'[a-zA-Z0-9\.\_\%\+\-]+@\w+\.[a-z]+', email):
                 legislator.add_contact_detail(type='email', value=email, note='District Office')
 
             yield legislator
@@ -122,110 +133,56 @@ class MTPersonScraper(Scraper):
         '''
         res = {'HD': {}, 'SD': {}}
 
-        url = 'http://leg.mt.gov/css/find%20a%20legislator.html'
+        url = 'https://leg.mt.gov/legislator-information/'
 
-        # Get base url.
-        parts = parse.urlparse(url)
-        parts._replace(path='')
-        baseurl = parts.geturl()
-
-        # Go the find-a-legislator page.
+        # Go the legislator-information page.
         doc = self.url_xpath(url)
-        doc.make_links_absolute(baseurl)
+        doc.make_links_absolute(url)
+        table = doc.xpath('//table[@id="reports-table"]')[0]
 
-        # Get the link to the current member roster.
-        url = doc.xpath('//a[contains(@href, "roster")]/@href')[0]
+        for tr in table.xpath('tbody/tr'):
 
-        # Fetch it.
-        self.raise_errors = False
-        html = self.get(url).text
-        doc = lxml.html.fromstring(html)
-        self.raise_errors = True
-
-        # Get the new baseurl, like 'http://leg.mt.gov/css/Sessions/62nd/'
-        parts = parse.urlparse(url)
-        path, _, _ = parts.path.rpartition('/')
-        parts._replace(path=path)
-        baseurl = parts.geturl()
-        doc.make_links_absolute(baseurl)
-        table = doc.xpath('//table[@name="Legislators"]')[0]
-
-        for tr in table.xpath('tr'):
-
-            td1, td2 = tr.xpath('td')
+            email, name, party, seat, phone = tr.xpath('td')
 
             # Skip header rows and retired legislators
-            if not td2.text_content().strip() or ' resigned ' in tr.text_content().lower():
+            if not name.text_content().strip() or ' resigned ' in name.text_content().lower():
                 continue
 
             # Get link to the member's page.
-            detail_url = td1.xpath('h4/a/@href')[0]
+            detail_url = name.xpath('a/@href')[0]
 
             # Get the members district so we can match the
             # profile page with its csv record.
-            house, district = td2.text_content().split()
-            res[house][district] = detail_url
+            chamber, district = seat.text_content().split()
+            res[chamber][district] = detail_url
 
         return res
 
     def _scrape_details(self, url):
-        '''Scrape the member's bio page.
-
-        Things available but not currently scraped are office address,
-        and waaay too much contact info, including personal email, phone.
         '''
+        Scrape the member's bio page.
+
+        Legislator images are rendered as inline pngs, so no photo url is
+        currently available.
+        '''
+        details = {}
         doc = self.url_xpath(url)
-        # Get base url.
-        parts = parse.urlparse(url)
-        parts._replace(path='')
-        baseurl = parts.geturl()
 
-        doc.make_links_absolute(baseurl)
+        phone_email_p = doc.xpath('//div[contains(h4, "Contact Information")]/p')[1]
 
-        xpath = '//img[contains(@src, "legislator")]/@src'
-
-        try:
-            photo_url = doc.xpath(xpath).pop()
-        except IndexError:
-            raise NoDetails('No details found at %r' % url)
-
-        details = {'photo_url': photo_url}
-
-        # # Parse address.
-        elements = list(doc.xpath('//b[contains(., "Address")]/..')[0])
-
-        # # MT's website currently has a typo that places the "address"
-        # # heading inline with the "Information Office" phone number.
-        # # This hack tempprarily makes things work.
-        elements = elements[3:]
-        chunks = []
-        for br in elements:
-            chunks.extend(filter(None, [br.text, br.tail]))
-
-        # As far as I can tell, MT legislators don't have capital offices.
-        for line in chunks[2:]:
-            if not line.strip():
+        for line in phone_email_p.text_content().split("\n"):
+            key, _, value = [s.strip() for s in line.partition(':')]
+            if not key and value:
                 continue
-            for key in ('ph', 'fax'):
-                if key in line.lower():
-                    key = {'ph': 'phone'}.get(key)
-                    break
-            number = re.search(r'\(\d{3}\) \d{3}\-\d{4}', line)
-            if number:
-                number = number.group()
-                if key:
-                    # Used to set this on the office.
-                    details[key] = number
 
-        try:
-            email = doc.xpath('//b[contains(., "Email")]/..')[0]
-        except IndexError:
-            pass
-        else:
-            if email:
-                html = lxml.html.tostring(email.getparent()).decode()
-                match = re.search(r'[a-zA-Z0-9\.\_\%\+\-]+@\w+\.[a-z]+', html)
-                if match:
-                    details['email'] = match.group()
+            if key == 'Email' and re.match(r'[a-zA-Z0-9\.\_\%\+\-]+@\w+\.[a-z]+', value):
+                details['email'] = value
+
+            elif key == 'Primary ph' and re.match(r'\(\d{3}\) \d{3}\-\d{4}', value):
+                details['phone'] = value
+
+            elif (key == 'Secondary ph' and re.match(r'\(\d{3}\) \d{3}\-\d{4}', value)
+                    and 'phone' not in details):
+                details['phone'] = value
 
         return details
