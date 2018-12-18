@@ -48,7 +48,9 @@ class NHPersonScraper(Scraper, LXMLMixin):
         else:
             district = str(int(row['District'])).strip()
 
-        party = self.party_map[row['party'].upper()]
+        party = ''
+        if row['party']:
+            party = self.party_map[row['party'].upper()]
         email = row['WorkEmail']
 
         if district == '0':
@@ -112,8 +114,11 @@ class NHPersonScraper(Scraper, LXMLMixin):
                 pass
 
         if profile_url:
-            person.image = self._get_photo(profile_url, chamber)
-            person.add_source(profile_url)
+            try:
+                person.image = self._get_photo(profile_url, chamber)
+                person.add_source(profile_url)
+            except:
+                self.warning("Can't get url %s" % profile_url)
 
         return person
 
