@@ -1,6 +1,6 @@
 from pupa.scrape import Jurisdiction, Organization
-from .people import IDPersonScraper
-from .committees import IDCommitteeScraper
+# from .people import IDPersonScraper
+# from .committees import IDCommitteeScraper
 from .bills import IDBillScraper
 from openstates.utils.lxmlize import url_xpath
 
@@ -11,8 +11,8 @@ class Idaho(Jurisdiction):
     name = "Idaho"
     url = "http://www.legislature.idaho.gov"
     scrapers = {
-        'people': IDPersonScraper,
-        'committees': IDCommitteeScraper,
+        # 'people': IDPersonScraper,
+        # 'committees': IDCommitteeScraper,
         'bills': IDBillScraper
     }
     legislative_sessions = [
