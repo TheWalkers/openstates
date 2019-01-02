@@ -1,8 +1,8 @@
 import re
 
 from pupa.scrape import Person, Scraper
-from openstates.utils import LXMLMixin
-
+from openstates.utils import (
+    LXMLMixin, validate_phone_number, validate_email_address)
 import xlrd
 
 excel_mapping = {
@@ -95,20 +95,20 @@ class RIPersonScraper(Scraper, LXMLMixin):
                 party=translate[d['party']], image=photo_url
             )
             person.extras['town_represented'] = d['town_represented']
-            person.extras['name_first'] = first
-            person.extras['name_middle'] = middle
-            person.extras['name_last'] = last
             person.add_link(detail_link)
 
             if d['address']:
                 person.add_contact_detail(type='address', value=d['address'],
                                           note='District Office')
-            if contact_info['phone']:
+
+            phone = contact_info['phone']
+            if phone and validate_phone_number(phone):
                 person.add_contact_detail(
-                    type='voice', value=contact_info['phone'], note='District Office')
-            if contact_info['email']:
+                    type='voice', value=phone, note='District Office')
+            email = contact_info['email']
+            if email and validate_email_address(email):
                 person.add_contact_detail(
-                    type='email', value=contact_info['email'], note='District Office')
+                    type='email', value=email, note='District Office')
 
             person.add_source(contact_url)
             person.add_source(contact_info['detail_link'])
