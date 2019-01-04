@@ -58,7 +58,7 @@ class Massachusetts(Jurisdiction):
             "identifier": "191st",
             "name": "191st Legislature (2019-2020)",
             'start_date': '2019-01-02',
-            'end_date': '2019-06-19',
+            'end_date': '2020-12-31',
         }
     ]
     ignored_scraped_sessions = []
