@@ -1,6 +1,12 @@
 #!/bin/sh
 set -e
 
+# copy environment variables
+export OCD_DATABASE_NAME="openstatesorg"
+export OCD_DATABASE_HOST=$PGHOST
+export OCD_DATABASE_USER=$PGUSER
+export OCD_DATABASE_PASSWORD=$PGPASSWORD
+
 # checkout fresh copy of people directory
 rm -rf /tmp/os-people
 git clone https://github.com/openstates/people.git /tmp/os-people/
