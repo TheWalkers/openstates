@@ -69,23 +69,42 @@ class NCPersonScraper(Scraper):
             lhtml = self.get(link).text
             ldoc = lxml.html.fromstring(lhtml)
             ldoc.make_links_absolute('http://www.ncleg.net')
-            photo_url = ldoc.xpath('//a[contains(@href, "pictures")]/@href')[0]
-            phone = (get_table_item(ldoc, 'District Phone:') or
-                     get_table_item(ldoc, 'Phone:') or None)
-            address = (get_table_item(ldoc, 'District Address:') or
-                       get_table_item(ldoc, 'Address:') or None)
-            email = ldoc.xpath('//a[starts-with(@href, "mailto:")]')[0]
-            capitol_email = email.text
-            capitol_phone = email.xpath('ancestor::tr[1]/preceding-sibling::tr[1]/td/span')[0].text
-            capitol_address = email.xpath('ancestor::tr[1]/preceding-sibling::tr[2]/td/text()')
-            capitol_address = [x.strip() for x in capitol_address]
-            capitol_address = '\n'.join(capitol_address) or None
-            capitol_phone = capitol_phone.strip() or None
+            cols = ldoc.xpath('//div[contains(@class, "card-body")]/div/div')
+
+            address = capitol_address = phone = capitol_phone = email = None
+
+            # column 0 has an inline picture, no usable photo url
+
+            # column 1 has addresses
+            addr_ps = cols[1].xpath('//h6[contains(text(), "Mailing Address:")]/following-sibling::p')
+            if addr_ps and addr_ps[0].text != 'None':
+                capitol_address = address = '\n'.join([p.text.strip() for p in addr_ps])
+
+            addr_ps = cols[1].xpath('//h6[contains(text(), "Legislative Office:")]/following-sibling::p')
+            if addr_ps and addr_ps[0].text != 'None':
+                capitol_address = '\n'.join([p.text.strip() for p in addr_ps[:2]])
+                if addr_ps[2:]:
+                    cap_phone_a = addr_ps[2].xpath('//a[starts-with(@href, "tel:")]')
+                    if cap_phone_a:
+                        capitol_phone = cap_phone_a[0].text
+
+            # column 2 has phone and email
+            phone_a = cols[2].xpath('//h6[contains(text(), "Phone:")]/ancestor::div/following-sibling::div/p/a[starts-with(@href, "tel:")]')
+            if phone_a:
+                phone = phone_a[0].text.strip()
+
+            if phone and not capitol_phone:
+                capitol_phone = phone
+
+            email_a = cols[2].xpath('//h6[contains(text(), "Email:")]/ancestor::div/following-sibling::div/p/a[starts-with(@href, "mailto:")]')
+            if email_a:
+                capitol_email = email_a[0].text.strip()
+
+            # column 3 has district map, skipped
 
             # save legislator
             person = Person(name=full_name, district=district,
-                            party=party, primary_org=chamber,
-                            image=photo_url)
+                            party=party, primary_org=chamber)
             person.extras['counties'] = counties.text_content().split(', ')
             person.extras['notice'] = notice
             person.add_link(link)
