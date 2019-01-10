@@ -158,7 +158,7 @@ class MIPersonScraper(Scraper):
                     text_email = [a for a in links
                                   if 'mailto:' in (a.get('href') or '')]
                     if text_email:
-                        email = text_email[0].text
+                        email = text_email[0].get('href').replace('mailto:', '').strip()
             except requests.exceptions.TooManyRedirects:
                 self.warning("Contact Link Not Working for %s" % name)
             person = Person(name=name, district=district, party=party,
@@ -180,6 +180,6 @@ class MIPersonScraper(Scraper):
         doc = lxml.html.fromstring(data)
         doc.make_links_absolute(url)
         return (
-            doc.xpath('//div[contains(@class, "headshotTop")]//img/@src') +  # housedems.com
+            doc.xpath('//section[contains(@class, "headshot")]//img/@src') +  # housedems.com
             doc.xpath('//div[contains(@class, "widget_sp_image")]//img/@src')  # gophouse.org
         )
