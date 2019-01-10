@@ -78,7 +78,9 @@ class CTPersonScraper(Scraper):
                          district=district,
                          party=party
                          )
-            leg.add_link(row['URL'])
+            row['URL'] = row['URL'].strip().replace('\\', '/')
+            if row['URL']:
+                leg.add_link(row['URL'])
             leg.add_party(party=party)
 
             office_address = "%s\nRoom %s\nHartford, CT 06106" % (
