@@ -74,7 +74,9 @@ class MOPersonScraper(Scraper):
             person.add_link(url)
 
             page = lxml.html.fromstring(details_page)
-            photo_url = page.xpath('//*[@id="content-2"]//img[contains(@src, "uploads")]/@src')[0]
+            photo_url_path = page.xpath('//*[@id="content-2"]//img[contains(@src, "uploads")]/@src')
+            if photo_url_path:
+                person.image = photo_url_path[0]
 
             contact_info = [
                 line.strip()
@@ -105,8 +107,6 @@ class MOPersonScraper(Scraper):
             if email:
                 person.add_contact_detail(type='email', value=email, note='Capitol Office')
 
-            person.image = photo_url
-
             yield person
 
     def _scrape_lower_chamber(self):
@@ -120,7 +120,7 @@ class MOPersonScraper(Scraper):
         # This is the ASP.net table container
         table_xpath = ("//table[@id='theTable']")
         table = page.xpath(table_xpath)[0]
-        for tr in table.xpath('tr')[3:]:
+        for tr in table.xpath('tr'):
             # If a given term hasn't occurred yet, then ignore it
             # Eg, in 2017, the 2018 term page will have a blank table
             if tr.attrib.get('class') == 'dxgvEmptyDataRow':
