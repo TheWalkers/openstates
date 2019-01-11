@@ -110,7 +110,8 @@ class WestVirginia(Jurisdiction):
             "classification": "primary",
             "identifier": "2019",
             "name": "2019 Regular Session",
-            "start_date": "2019-01-09",
+            "start_date": "2019-01-14",
+            "end_date": "2019-03-09",
         },
     ]
     ignored_scraped_sessions = [
