@@ -10,7 +10,7 @@ class UTPersonScraper(Scraper, LXMLMixin):
             "D": "Democratic"
         }
         representative_url = "http://house.utah.gov/rep/{}"
-        senator_url = "http://senate.utah.gov/senators/district{}.html"
+        senator_url = "https://le.utah.gov/asp/roster/leglookup.asp?house=S&dist={}"
 
         json_link = "http://le.utah.gov/data/legislators.json"
         person_json = self.get(json_link).json()
@@ -32,15 +32,17 @@ class UTPersonScraper(Scraper, LXMLMixin):
             else:
                 link = senator_url.format(info["district"])
             try:
-                self.head(link)
+                response = self.head(link)
+                if 300 <= response.status_code < 400:
+                    link = response.headers['Location']
             except HTTPError:
                 self.logger.warning("Bad URL for {}".format(info["formatName"]))
             else:
                 person.add_link(link)
 
-            address = info.get('address')
-            email = info.get('email')
-            fax = info.get('fax')
+            address = info.get('address').strip()
+            email = info.get('email').strip()
+            fax = info.get('fax').strip()
 
             # Work phone seems to be the person's non-legislative
             # office phone, and thus a last option
