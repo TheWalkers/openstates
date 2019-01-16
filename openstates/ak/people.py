@@ -1,6 +1,6 @@
 import re
 from pupa.scrape import Person, Scraper
-from openstates.utils import LXMLMixin
+from openstates.utils import LXMLMixin, validate_phone_number
 
 
 class AKPersonScraper(Scraper, LXMLMixin):
@@ -85,16 +85,18 @@ class AKPersonScraper(Scraper, LXMLMixin):
             )
 
             assert interim_office[3].startswith('Phone:')
-            if len(interim_office[3]) > len('Phone:'):
+            district_phone = interim_office[3][len('Phone:'):]
+            if district_phone and validate_phone_number(district_phone):
                 person.add_contact_detail(
                     type='voice',
-                    value=interim_office[3][len('Phone: '):],
+                    value=district_phone,
                     note='District Office Phone',
                 )
 
             if len(interim_office) >= 5:
                 assert interim_office[4].startswith('Fax:')
-                if len(interim_office[4]) > len('Fax:'):
+                district_fax = interim_office[4][len('Fax:'):]
+                if district_fax and validate_phone_number(district_fax):
                     person.add_contact_detail(
                         type='fax',
                         value=interim_office[4][len('Fax: '):],
