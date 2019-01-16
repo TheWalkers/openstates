@@ -61,9 +61,10 @@ class Hawaii(Jurisdiction):
         },
         {
             "_scraped_name": "2019",
+            "end_date": "2019-04-12",
             "identifier": "2019 Regular Session",
             "name": "2019 Regular Session",
-            'start_date': '2019-01-16',
+            'start_date': '2019-01-15',
         }
     ]
     ignored_scraped_sessions = [
