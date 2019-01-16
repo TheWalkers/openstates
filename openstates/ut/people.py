@@ -40,9 +40,9 @@ class UTPersonScraper(Scraper, LXMLMixin):
             else:
                 person.add_link(link)
 
-            address = info.get('address').strip()
-            email = info.get('email').strip()
-            fax = info.get('fax').strip()
+            address = info.get('address', '').strip()
+            email = info.get('email', '').strip()
+            fax = info.get('fax', '').strip()
 
             # Work phone seems to be the person's non-legislative
             # office phone, and thus a last option
