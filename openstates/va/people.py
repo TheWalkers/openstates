@@ -36,7 +36,7 @@ class MemberDetail(Page):
         self.get_committees(item)
 
         photo_url = self.get_photo_url()
-        if photo_url is not None:
+        if photo_url:
             self.obj.image = photo_url
 
     def get_offices(self, item):
@@ -92,7 +92,7 @@ class SenateDetail(MemberDetail):
         profile_url = 'http://apps.senate.virginia.gov/Senator/memberpage.php?id={}'.format(lis_id)
         page = lxml.html.fromstring(self.scraper.get(profile_url).text)
         src = page.xpath('.//img[@class="profile_pic"]/@src')
-        img = src[0] if src else None
+        img = src[0] if src else ''
         if img.startswith('//'):
             img = 'https:' + img
         return img
