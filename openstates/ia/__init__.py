@@ -49,7 +49,7 @@ class Iowa(Jurisdiction):
             "identifier": "2019-2020",
             "name": "2019-2020 Regular Session",
             "start_date": "2019-01-14",
-            "end_date": "2021-01-10",
+            "end_date": "2019-05-03",
         }
     ]
     ignored_scraped_sessions = [
