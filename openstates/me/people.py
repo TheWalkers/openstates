@@ -72,6 +72,7 @@ class MEPersonScraper(Scraper):
         person.add_contact_detail(type='address', value=address, note='District Office')
         person.add_contact_detail(type='email', value=email, note='District Office')
 
+        person.add_link(url)
         person.add_source(url)
 
         yield person
