@@ -69,7 +69,8 @@ class MDPersonScraper(Scraper):
             if img_src:
                 photo_url = img_src[0]
 
-            name = ' '.join(name.split(', ')[::-1])
+            names = name.split(', ')
+            name = ' '.join([names[1], names[0]] + names[2:])
 
             leg = Person(
                 primary_org=chamber,
