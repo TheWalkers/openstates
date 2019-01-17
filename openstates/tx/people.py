@@ -197,14 +197,21 @@ class TXPersonScraper(Scraper, LXMLMixin):
         scraped_name = scraped_name.text_content().strip().replace('Rep. ', '')
         scraped_name = ' '.join(scraped_name.split())
 
-        name = ' '.join(scraped_name.split(', ')[::-1])
-
-        district_text = district_text.text_content().strip()
-        district = str(self.district_re.search(district_text).group(1))
-
         # Vacant house "members" are named after their district numbers:
         if re.match(r'^District \d+$', scraped_name):
             return
+
+        last, first = scraped_name.rsplit(', ', 1)
+        last = last.replace(',', '')
+        suffix = re.search(r',? (III|Jr|Sr)\.?,?$', first)
+        if suffix:
+            first = first[:-len(suffix.group(0))]
+            last = '{} {}'.format(last, suffix.group(1))
+        name = ' '.join([first, last])
+        print(scraped_name, first, last, name)
+
+        district_text = district_text.text_content().strip()
+        district = str(self.district_re.search(district_text).group(1))
 
         party = parties[district]
 
