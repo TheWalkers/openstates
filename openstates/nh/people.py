@@ -77,13 +77,6 @@ class NHPersonScraper(Scraper, LXMLMixin):
                         name=full_name,
                         party=party)
 
-        extras = {
-            'first_name': first_name,
-            'middle_name': middle_name,
-            'last_name': last_name
-        }
-
-        person.extras = extras
         if email:
             office = 'Capitol' if email.endswith('@leg.state.nh.us') else 'District'
             person.add_contact_detail(type='email', value=email, note=office + ' Office')
