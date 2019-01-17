@@ -52,7 +52,6 @@ class KSPersonScraper(Scraper, LXMLMixin):
             party=party,
             image=photo_url,
         )
-        person.extras = {'occupation': content['OCCUPATION']}
 
         address = '\n'.join([
             'Room {}'.format(content['OFFICENUM']),
