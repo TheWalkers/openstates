@@ -6,6 +6,8 @@ from pupa.scrape import Person, Scraper
 
 import lxml.html
 
+from openstates.utils import validate_phone_number
+
 
 class WVPersonScraper(Scraper):
     jurisdiction = 'wv'
@@ -108,7 +110,7 @@ class WVPersonScraper(Scraper):
         if email:
             legislator.add_contact_detail(type='email', value=email, note='Capitol Office')
 
-        if capitol_phone:
+        if capitol_phone and validate_phone_number(capitol_phone):
             legislator.add_contact_detail(type='voice', value=capitol_phone, note='Capitol Office')
 
         if capitol_address:
@@ -134,7 +136,7 @@ class WVPersonScraper(Scraper):
             district_address = None
 
         # Add district office entry only if data exists for it.
-        if district_phone:
+        if district_phone and validate_phone_number(district_phone):
             legislator.add_contact_detail(type='voice', value=district_phone,
                                           note='District Office')
 
