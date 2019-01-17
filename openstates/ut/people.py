@@ -17,9 +17,13 @@ class UTPersonScraper(Scraper, LXMLMixin):
 
         for info in person_json["legislators"]:
             chamber = "lower" if info["house"] == "H" else "upper"
+            name = info["formatName"]
+
+            if name == 'Johnson Dan N.':
+                name = 'Dan N. Johnson'
 
             person = Person(
-                name=info["formatName"],
+                name=name,
                 district=info["district"],
                 party=PARTIES[info["party"]],
                 image=info["image"],
