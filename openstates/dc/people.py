@@ -5,8 +5,7 @@ import lxml.html
 
 def get_field(doc, key):
     # get text_content of parent of the element containing the key
-    # elem = doc.xpath('//div[@id="member-info"]/p/strong[text()="%s"]/..' % key)
-    elem = doc.xpath('//li[contains(@class,"column")]/h4[text()="%s"]/../p')
+    elem = doc.xpath('//li[contains(@class,"column")]/h4[text()="%s"]/../p' % key)
     if elem:
         return elem[0].text_content().strip()
     else:
@@ -72,6 +71,7 @@ class DCPersonScraper(Scraper):
             phone = doc.xpath(
                 '//p[@class="byline"]/a[@class="contact-link"]')[1].text_content().strip()
 
+            short_bio = ''
             bio = "\n".join(
                 doc.xpath('//div[contains(@class,"js-hide")]/p/text()')).strip()
             if doc.xpath('//p[contains(@class,"page-summary")]'):
