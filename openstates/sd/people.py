@@ -111,12 +111,14 @@ class SDLegislatorScraper(Scraper):
         ]
         if home_address:
             home_address = "\n".join(home_address)
-            home_phone = page.xpath(
-                "string(//span[contains(@id, 'HomePhone')])").strip()
+            home_phone = (
+                page.xpath("//span[contains(@id, 'HomePhone')]") or
+                page.xpath("//span[contains(@id, 'BusinessPhone')]"))
             legislator.add_contact_detail(type='address',
                                           value=home_address,
                                           note='District Office')
-            if home_phone:
+            if home_phone[1:]:
+                home_phone = home_phone[1].text.strip()
                 legislator.add_contact_detail(type='voice',
                                               value=home_phone,
                                               note='District Office')
