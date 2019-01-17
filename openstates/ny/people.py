@@ -401,9 +401,7 @@ class NYPersonScraper(Scraper, LXMLMixin):
                 self.critical(
                     'Party for {} (Assembly district {}) has not been listed yet'.format(
                         name, district))
-                if name in ('Farrell, Jr., Herman',
-                            'Simanowitz, Michael',
-                            'Rosenthal, Daniel',
+                if name in ('Rosenthal, Daniel',
                             'Taylor, Al'):
                     party = 'Democratic'
                 elif name == 'Tague, Chris':
@@ -419,7 +417,8 @@ class NYPersonScraper(Scraper, LXMLMixin):
 
             legislator_url = name_anchor.get('href')
 
-            name = ' '.join(name.split(', ')[::-1])
+            last, first = name.rsplit(', ', 1)
+            name = ' '.join([first, last])
 
             person = Person(name=name,
                             district=district,
