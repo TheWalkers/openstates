@@ -67,7 +67,7 @@ class HIPersonScraper(Scraper):
             district = self.scrape_district_info(district)
             homepage = self.scrape_homepage(metainf['homepage'])
 
-            image = "%s/%s" % (
+            image = "%s%s" % (
                 HI_BASE_URL,
                 image.xpath("./*/img")[0].attrib['src']
             )
@@ -111,7 +111,7 @@ class HIPersonScraper(Scraper):
         return district[2].text_content()
 
     def scrape_contact_info(self, contact):
-        homepage = "%s/%s" % (   # XXX: Dispatch a read on this page
+        homepage = "%s%s" % (   # XXX: Dispatch a read on this page
             HI_BASE_URL,
             contact.xpath("./a")[0].attrib['href']
         )
