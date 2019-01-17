@@ -88,6 +88,8 @@ class MOPersonScraper(Scraper):
             address = '\n'.join(contact_info[:2])
             email = next((line for line in iter(contact_info) if '@' in line),
                          None)
+            if email:
+                email = email.rstrip("*")
             phone_pattern = re.compile(r'\(\d{3}\) \d{3}-\d{4}')
             phone_numbers = [line for line in contact_info
                              if phone_pattern.search(line) is not None]
@@ -153,10 +155,6 @@ class MOPersonScraper(Scraper):
                     district=district,
                     party=party,
                 )
-                person.extras = {
-                    'first_name': first_name,
-                    'last_name': last_name,
-                }
 
                 person.add_contact_detail(type='address', value=address, note='Capitol Office')
                 if phone.strip():
@@ -181,10 +179,6 @@ class MOPersonScraper(Scraper):
                     district=district,
                     party=party,
                 )
-                person.extras = {
-                    'first_name': first_name,
-                    'last_name': last_name,
-                }
                 person.add_source(roster_url)
                 person.add_source(details_url)
                 person.add_link(details_url)
