@@ -79,6 +79,10 @@ class WYPersonScraper(Scraper):
             person.extras['place_of_birth'] = details['birthPlace']
             person.extras['occupation'] = details['occupationDesc']
 
+            for k, v in person.extras.items():
+                if isinstance(v, str):
+                    person.extras[k] = v.strip()
+
             if details['legEducation']:
                 person.extras['education'] = details['legEducation']
 
