@@ -79,7 +79,9 @@ class SenList(Page):
 
         leg_url = item.get('href')
 
-        name = fix_name(name)
+        parts = name.split(', ')
+        parts[:2] = parts[1::-1]  # reverse first two
+        name = ' '.join(parts)
         leg = Person(name=name, district=district, party=party,
                      primary_org='upper', role='Senator')
         leg.add_link(leg_url)
@@ -92,7 +94,7 @@ class SenList(Page):
 
 
 class RepList(Page):
-    url = "http://www.flhouse.gov/Sections/Representatives/representatives.aspx"
+    url = "http://www.myfloridahouse.gov/Sections/Representatives/representatives.aspx"
     directory_pdf_url = 'http://www.myfloridahouse.gov/FileStores/Web/'\
                         'HouseContent/Approved/ClerksOffice/HouseDirectory.pdf'
     list_xpath = '//div[@id="MemberListing"]/div[@class="rep_listing1"]'
