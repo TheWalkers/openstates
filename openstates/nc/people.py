@@ -1,3 +1,4 @@
+import re
 from pupa.scrape import Scraper, Person
 import lxml.html
 
@@ -33,34 +34,31 @@ class NCPersonScraper(Scraper):
             yield from self.scrape_chamber('lower')
 
     def scrape_chamber(self, chamber):
-        url = "http://www.ncleg.net/gascripts/members/memberListNoPic.pl?sChamber="
+        url = "https://www.ncleg.gov/Members/MemberList/"
 
         if chamber == 'lower':
-            url += 'House'
+            url += 'H'
         else:
-            url += 'Senate'
+            url += 'S'
 
         data = self.get(url).text
         doc = lxml.html.fromstring(data)
-        doc.make_links_absolute('http://www.ncleg.net')
-        rows = doc.xpath('/html/body/div/table/tr/td[1]/table/tr')
+        doc.make_links_absolute('https://www.ncleg.gov')
+        rows = doc.xpath('//main/div[@class="row"]/div[contains(@class, "col-xl-2")]')
 
-        for row in rows[1:]:
-            party, district, full_name, counties = row.getchildren()
+        for row in rows:
+            children = row.getchildren()
+            second_row = children[1].text or ''
+            if 'Resigned' in second_row or 'Deceased' in second_row:
+                continue
 
-            party = party.text_content().strip("()")
+            full_name, district, counties = children
+
+            party = re.search(r'\(([DR])\)$', full_name.text_content()).group(1)
             party = party_map[party]
 
             district = district.text_content().replace("District", "").strip()
 
-            notice = full_name.xpath('span')
-            if notice:
-                notice = notice[0].text_content()
-                # skip resigned legislators
-                if 'Resigned' in notice or 'Deceased' in notice:
-                    continue
-            else:
-                notice = None
             link = full_name.xpath('a/@href')[0]
             full_name = full_name.xpath('a')[0].text_content()
             full_name = full_name.replace(u'\u00a0', ' ')
@@ -68,7 +66,7 @@ class NCPersonScraper(Scraper):
             # scrape legislator page details
             lhtml = self.get(link).text
             ldoc = lxml.html.fromstring(lhtml)
-            ldoc.make_links_absolute('http://www.ncleg.net')
+            ldoc.make_links_absolute('https://www.ncleg.gov')
             cols = ldoc.xpath('//div[contains(@class, "card-body")]/div/div')
 
             address = capitol_address = phone = capitol_phone = email = None
@@ -78,7 +76,11 @@ class NCPersonScraper(Scraper):
             # column 1 has addresses
             addr_ps = cols[1].xpath('//h6[contains(text(), "Mailing Address:")]/following-sibling::p')
             if addr_ps and addr_ps[0].text != 'None':
-                capitol_address = address = '\n'.join([p.text.strip() for p in addr_ps])
+                addr = '\n'.join([p.text.strip() for p in addr_ps])
+                if chamber == 'upper':
+                    capitol_address = addr
+                else:
+                    address = addr
 
             addr_ps = cols[1].xpath('//h6[contains(text(), "Legislative Office:")]/following-sibling::p')
             if addr_ps and addr_ps[0].text != 'None':
@@ -89,14 +91,14 @@ class NCPersonScraper(Scraper):
                         capitol_phone = cap_phone_a[0].text
 
             # column 2 has phone and email
-            phone_a = cols[2].xpath('//h6[contains(text(), "Phone:")]/ancestor::div/following-sibling::div/p/a[starts-with(@href, "tel:")]')
+            phone_a = cols[2].xpath('//p[contains(text(), "Phone:")]/ancestor::div/following-sibling::div/p/a[starts-with(@href, "tel:")]')
             if phone_a:
                 phone = phone_a[0].text.strip()
 
             if phone and not capitol_phone:
-                capitol_phone = phone
+                capitol_phone, phone = phone, None
 
-            email_a = cols[2].xpath('//h6[contains(text(), "Email:")]/ancestor::div/following-sibling::div/p/a[starts-with(@href, "mailto:")]')
+            email_a = cols[2].xpath('//p[contains(text(), "Email:")]/ancestor::div/following-sibling::div/p/a[starts-with(@href, "mailto:")]')
             if email_a:
                 capitol_email = email_a[0].text.strip()
 
@@ -105,8 +107,7 @@ class NCPersonScraper(Scraper):
             # save legislator
             person = Person(name=full_name, district=district,
                             party=party, primary_org=chamber)
-            person.extras['counties'] = counties.text_content().split(', ')
-            person.extras['notice'] = notice
+            person.extras['counties'] = [c.strip() for c in counties.text_content().split(',')]
             person.add_link(link)
             person.add_source(link)
             if address:
