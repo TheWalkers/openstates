@@ -65,7 +65,7 @@ class NVPeopleScraper(Scraper):
             if phone:
                 person.add_contact_detail(type='voice', value=phone,
                                           note='District Office')
-            if phone:
+            if email:
                 person.add_contact_detail(type='email', value=email,
                                           note='District Office')
             person.add_link(leg_details_url)
