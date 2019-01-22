@@ -48,20 +48,24 @@ class AKPersonScraper(Scraper, LXMLMixin):
         )
 
         assert capitol_office[3].startswith('Phone:')
-        if len(capitol_office[3]) > len('Phone:'):
+        capitol_phone = capitol_office[3][len('Phone: '):].strip()
+        if capitol_phone and validate_phone_number(capitol_phone):
+            if len(capitol_phone) == 8:  # missing area code
+                capitol_phone = '907-' + capitol_phone
             person.add_contact_detail(
                 type='voice',
-                value=capitol_office[3][len('Phone: '):],
+                value=capitol_phone,
                 note='Capitol Office Phone',
             )
 
         # Some legislators lack a `Fax` line
         if len(capitol_office) >= 5:
             assert capitol_office[4].startswith('Fax:')
-            if len(capitol_office[4]) > len('Fax:'):
+            fax = capitol_office[4][len('Fax: '):].strip()
+            if fax and validate_phone_number(fax):
                 person.add_contact_detail(
                     type='fax',
-                    value=capitol_office[4][len('Fax: '):],
+                    value=fax,
                     note='Capitol Office Fax',
                 )
 
