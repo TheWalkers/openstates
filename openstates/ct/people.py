@@ -94,7 +94,8 @@ class CTPersonScraper(Scraper):
             if "@" not in email:
                 if not email:
                     email = None
-                elif email.startswith('http://') or email.startswith('https://'):
+                elif (email.startswith('http://') or email.startswith('https://')
+                        or 'mailform.php' in email):
                     # extra_office_fields['contact_form'] = email
                     email = None
                 else:
