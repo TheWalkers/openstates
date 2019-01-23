@@ -2,7 +2,7 @@ import re
 import datetime
 
 from pupa.scrape import Person, Scraper
-from openstates.utils import LXMLMixin
+from openstates.utils import LXMLMixin, validate_phone_number
 
 
 class NYPersonScraper(Scraper, LXMLMixin):
@@ -216,6 +216,8 @@ class NYPersonScraper(Scraper, LXMLMixin):
 
         if fax_node is not None:
             fax = fax_node.text.strip()
+            if not validate_phone_number(fax):
+                fax = None
 
         office = dict(
             name=office_name,
