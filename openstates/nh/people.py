@@ -61,16 +61,9 @@ class NHPersonScraper(Scraper, LXMLMixin):
             self.warning('Skipping {}, district is set to 0'.format(full_name))
             return
 
-        # Temporary fix for Kari Lerner
-        if district == 'Rockingham 0' and last_name == 'Lerner':
-            district = 'Rockingham 4'
-
-        # Temporary fix for Casey Conley
-        if last_name == 'Conley':
-            if district == '13':
-                district = 'Strafford 13'
-            elif district == 'Strafford 13':
-                self.info('"Temporary fix for Casey Conley" can be removed')
+        # Temporary fix for Scott Wallace
+        if district == 'Rockingham 33' and last_name == 'Wallace':
+            district = 'Rockingham 12'
 
         person = Person(primary_org=chamber,
                         district=district,
