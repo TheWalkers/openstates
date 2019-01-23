@@ -31,9 +31,10 @@ class NVPeopleScraper(Scraper):
             empty_names = ['District No', 'Vacant']
             if any(name in item['FullName'] for name in empty_names):
                 continue
-            last, first = item['FullName'].split(",", 1)
-            item['FullName'] = "{first} {last}".format(last=last,
-                                                       first=first).strip()
+            name_parts = item['FullName'].split(",")
+            last, first = name_parts[:2]
+            item['FullName'] = "{first} {last}".format(last=last.strip(),
+                                                       first=first.strip())
             person = Person(name=item['FullName'], district=item['DistrictNbr'],
                             party=item['Party'], primary_org=chamber,
                             image=item['PhotoURL'])
