@@ -1,4 +1,5 @@
 import json
+import re
 
 import scrapelib
 from pupa.scrape import Person, Scraper
@@ -45,8 +46,11 @@ class KSPersonScraper(Scraper, LXMLMixin):
             leg_url = ''
             photo_url = ''
 
+        name = content['FULLNAME']
+        name = re.sub('\s+', ' ', name)
+
         person = Person(
-            name=content['FULLNAME'],
+            name=name,
             district=str(content['DISTRICT']),
             primary_org=chamber,
             party=party,
