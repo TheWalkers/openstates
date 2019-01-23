@@ -1,7 +1,7 @@
 import re
 
 
-_phone_pattern = r'\(?\d+\)?[- ]?\d{3}[-.]\d{4}'
+_phone_pattern = r'\(?\d{3}\)?[- ]?\d{3}[-.]\d{4}'
 _phone_re = re.compile(_phone_pattern + '(?! Fax)', re.IGNORECASE)
 _fax_re = re.compile(
     r'(?<=Fax: )%s|%s(?= \(f\)| Fax)' % (_phone_pattern, _phone_pattern),
