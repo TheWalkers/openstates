@@ -97,7 +97,7 @@ class RIPersonScraper(Scraper, LXMLMixin):
             person.extras['town_represented'] = d['town_represented']
             person.add_link(detail_link)
 
-            if d['address']:
+            if d['address'] and d['address'] != '-':
                 person.add_contact_detail(type='address', value=d['address'],
                                           note='District Office')
 
