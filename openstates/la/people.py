@@ -131,6 +131,10 @@ class LAPersonScraper(Scraper, LXMLMixin):
                         primary_org='lower',
                         image=photo)
 
+        # whee, special case
+        if leg_info['phone'] == '504-83POLLY (837-6559)':
+            leg_info['phone'] = '504-837-6559'
+
         contacts = [
             (leg_info["office"], "address"),
             (leg_info["phone"], "voice"),
