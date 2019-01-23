@@ -37,6 +37,10 @@ class NEPersonScraper(Scraper, LXMLMixin):
                 if full_name == 'Seat Vacant':
                     continue
 
+                # a few legislators have their first initial also listed
+                # after their last time; trim this off
+                full_name = re.sub(r', [A-Z]\.$', '', full_name)
+
                 address_node = self.get_node(
                     info_node,
                     './address[@class="feature-content"]')
