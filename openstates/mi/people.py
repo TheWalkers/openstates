@@ -158,6 +158,7 @@ class MIPersonScraper(Scraper):
                                   if 'mailto:' in (a.get('href') or '')]
                     if text_email:
                         email = text_email[0].get('href').replace('mailto:', '').strip()
+                        email = email.replace('Edit ', '')  # fix a special case
             except requests.exceptions.TooManyRedirects:
                 self.warning("Contact Link Not Working for %s" % name)
             person = Person(name=name, district=district, party=party,
