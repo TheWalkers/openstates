@@ -53,6 +53,7 @@ class AZPersonScraper(Scraper):
                 name = name[0].text_content().strip()
             if '--' in name:
                 name = name.split('--')[0].strip()
+            name = re.sub(r'\s+', ' ', name)
 
             linkpage = self.get(link).text
             linkpage = linkpage.replace('--!>', '-->')
@@ -82,7 +83,7 @@ class AZPersonScraper(Scraper):
                 address = "House of Representatives\n"
             else:
                 address = "Senate\n"
-            address = address + "1700 West Washington\n Room " + room  \
+            address = address + "1700 West Washington\n" + room  \
                               + "\nPhoenix, AZ 85007"
 
             phone = phone.text_content().strip()
