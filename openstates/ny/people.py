@@ -173,7 +173,7 @@ class NYPersonScraper(Scraper, LXMLMixin):
             './/span[@class="locality"][1]/text()')
 
         if city_text is not None:
-            city = city_text.strip()
+            city = city_text.strip().rstrip(',')
 
         # Get office state.
         state_text = self.get_node(
@@ -466,6 +466,10 @@ class NYPersonScraper(Scraper, LXMLMixin):
             if address:
                 if address[-1].startswith("Fax: "):
                     fax = address.pop().replace("Fax: ", "")
+
+                    if (office_type == 'Capitol' and
+                            re.match(r'^\d{3}[- ]\d{4}$', fax)):
+                        fax = '518-{}'.format(fax.strip().replace(' ', '-'))
 
                 if re.search(r'\d{3}[-\s]?\d{3}[-\s]?\d{4}', address[-1]):
                     phone = address.pop()
