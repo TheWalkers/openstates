@@ -2,28 +2,6 @@ import re
 from pupa.scrape import Scraper, Person
 import lxml.html
 
-party_map = {'Dem': 'Democratic',
-             'Rep': 'Republican',
-             'Una': 'Unaffiliated',
-             'D': 'Democratic',
-             'R': 'Republican',
-             'U': 'Unaffiliated'}
-
-
-def get_table_item(doc, name):
-    # get span w/ item
-    try:
-        span = doc.xpath('//span[text()="{0}"]'.format(name))[0]
-        # get neighboring td's span
-        dataspan = span.getparent().getnext().getchildren()[0]
-        if dataspan.text:
-            return (dataspan.text + '\n' +
-                    '\n'.join([x.tail for x in dataspan.getchildren()])).strip()
-        else:
-            return None
-    except IndexError:
-        return None
-
 
 class NCPersonScraper(Scraper):
     def scrape(self, chamber=None):
@@ -34,30 +12,26 @@ class NCPersonScraper(Scraper):
             yield from self.scrape_chamber('lower')
 
     def scrape_chamber(self, chamber):
-        url = "https://www.ncleg.gov/Members/MemberList/"
-
-        if chamber == 'lower':
-            url += 'H'
-        else:
-            url += 'S'
+        chamber_letter = dict(lower='H',
+                              upper='S')[chamber]
+        url = 'https://www.ncleg.gov/Members/MemberTable/{}'.format(
+            chamber_letter
+        )
 
         data = self.get(url).text
         doc = lxml.html.fromstring(data)
         doc.make_links_absolute('https://www.ncleg.gov')
-        rows = doc.xpath('//main/div[@class="row"]/div[contains(@class, "col-xl-2")]')
+        rows = doc.xpath('//table[@id="memberTable"]/tbody/tr')
+        self.warning('rows found: {}'.format(len(rows)))
 
         for row in rows:
-            children = row.getchildren()
-            second_row = children[1].text or ''
-            if 'Resigned' in second_row or 'Deceased' in second_row:
-                continue
+            party, district, _, _, full_name, counties = row.getchildren()
 
-            full_name, district, counties = children
+            party = party.text_content().strip()
+            party = dict(D='Democratic',
+                         R='Republican')[party]
 
-            party = re.search(r'\(([DR])\)$', full_name.text_content()).group(1)
-            party = party_map[party]
-
-            district = district.text_content().replace("District", "").strip()
+            district = district.text_content().strip()
 
             link = full_name.xpath('a/@href')[0]
             full_name = full_name.xpath('a')[0].text_content()
@@ -110,18 +84,21 @@ class NCPersonScraper(Scraper):
             person.extras['counties'] = [c.strip() for c in counties.text_content().split(',')]
             person.add_link(link)
             person.add_source(link)
+
             if address:
                 person.add_contact_detail(type='address', value=address,
-                                          note='District Office')
-            if phone:
-                person.add_contact_detail(type='voice', value=phone,
                                           note='District Office')
             if capitol_address:
                 person.add_contact_detail(type='address', value=capitol_address,
                                           note='Capitol Office')
+
+            if phone:
+                person.add_contact_detail(type='voice', value=phone,
+                                           note='District Office')
             if capitol_phone:
                 person.add_contact_detail(type='voice', value=capitol_phone,
                                           note='Capitol Office')
+
             if capitol_email:
                 person.add_contact_detail(type='email', value=capitol_email,
                                           note='Capitol Office')
