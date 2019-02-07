@@ -151,6 +151,10 @@ class OHLegislatorScraper(Scraper):
             party = {"R": "Republican", "D": "Democratic"}[party]
             office_lines = data.xpath("child::text()")
             phone = office_lines.pop(-1)
+
+            if re.search(r'(Leader|Whip|Speaker)', office_lines[0]):
+                office_lines.pop(0)
+
             office = "\n".join(office_lines)
             h3 = data.xpath("./h3")
             if len(h3):
