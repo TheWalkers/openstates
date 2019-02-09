@@ -42,6 +42,8 @@ class UTPersonScraper(Scraper, LXMLMixin):
             except HTTPError:
                 self.logger.warning("Bad URL for {}".format(info["formatName"]))
             else:
+                if link == 'https://senate.utah.gov/david-g-buxton':
+                    link = 'https://senate.utah.gov/david-buxton'
                 person.add_link(link)
 
             address = info.get('address', '').strip()
