@@ -73,6 +73,7 @@ class PALegislatorScraper(Scraper):
         if re.search(r'var \S+\s+= "(\S+)";', email_block):
             vals = re.findall(r'var \S+\s+= "(\S+)";', email_block)
             email = '%s@%s%s' % tuple(vals)
+            email = re.sub(r'mailto:\s*', '', email)
             return email
 
     def scrape_offices(self, url, doc, person, email):
