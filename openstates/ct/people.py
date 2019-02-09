@@ -105,13 +105,17 @@ class CTPersonScraper(Scraper):
             if email:
                 leg.add_contact_detail(type='email', value=email)
 
-            home_address = "{}\n{}, {} {}".format(
-                row['home street address'],
-                row['home city'],
-                row['home state'],
-                row['home zip code'],
-            )
-            if "Legislative Office Building" not in home_address:
+            home_address = ""
+
+            if row['home street address'].strip():
+                home_address = "{}\n{}, {} {}".format(
+                    row['home street address'],
+                    row['home city'],
+                    row['home state'],
+                    row['home zip code'],
+                )
+
+            if home_address and "Legislative Office Building" not in home_address:
                 leg.add_contact_detail(type='address', value=home_address, note='District Office')
                 if row['home phone'].strip():
                     leg.add_contact_detail(type='voice',
