@@ -24,9 +24,9 @@ class WAPersonScraper(Scraper, LXMLMixin):
         for member in doc.xpath('//div[@id="allMembers"]/div[@class="memberInformation"]'):
             # check for committee assignments as a proxy for current membership
             # in the legislature; former legislators have none
-            committee_links = member.xpath('div/div/div[text()="Committees"]/following-sibling::div/a[contains(@href, "committees")]')
-            if not committee_links:
-                continue
+            # committee_links = member.xpath('div/div/div[text()="Committees"]/following-sibling::div/a[contains(@href, "committees")]')
+            # if not committee_links:
+            #     continue
 
             (photo_url, ) = member.xpath('.//a[text()="Print Quality Photo"]/@href')
 
