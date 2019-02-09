@@ -165,6 +165,7 @@ class TXPersonScraper(Scraper, LXMLMixin):
             id = th_tag.xpath('@id')[0] if th_tag.xpath('@id') else ''
             label = th_tag.xpath('text()')[0].strip() if th_tag.xpath('text()') else ''
             if id != '' and label != '':
+                label = label.replace("Address", "Office")
                 office_ids.append({'id': id, 'label': label})
 
         # logger.warn(office_ids)
@@ -240,7 +241,7 @@ class TXPersonScraper(Scraper, LXMLMixin):
         scraped_name, district_text = member_page.xpath(
             '//div[@class="member-info"]/h2')
         scraped_name = scraped_name.text_content().strip().replace('Rep. ', '')
-        scraped_name = ' '.join(scraped_name.split())
+        scraped_name = ' '.join(scraped_name.split()).strip()
 
         # Vacant house "members" are named after their district numbers:
         if re.match(r'^District \d+$', scraped_name):
