@@ -70,11 +70,9 @@ class GAPersonScraper(Scraper, LXMLMixin):
                 self.info('Skipping retired member {}'.format(member_info['Name']['Last']))
                 continue
 
-            nick_name, first_name, middle_name, last_name = (
-                member_info['Name'][x] for x in [
-                    'Nickname', 'First', 'Middle', 'Last'
-                ]
-            )
+            names = [member_info['Name'][x] for x in ['Nickname', 'First', 'Middle', 'Last']]
+            names = [n.strip() if n else n for n in names]
+            nick_name, first_name, middle_name, last_name = names
 
             first_name = nick_name if nick_name else first_name
 
