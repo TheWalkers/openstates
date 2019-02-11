@@ -97,7 +97,7 @@ class RepList(Page):
     url = "http://www.myfloridahouse.gov/Sections/Representatives/representatives.aspx"
     directory_pdf_url = 'http://www.myfloridahouse.gov/FileStores/Web/'\
                         'HouseContent/Approved/ClerksOffice/HouseDirectory.pdf'
-    list_xpath = '//div[@id="MemberListing"]/div[@class="rep_listing1"]'
+    list_xpath = '//div[@id="mb-2"]//div[@class="team-box"]'
 
     def handle_page(self):
         self.member_emails = self._load_emails_from_directory_pdf()
@@ -120,22 +120,30 @@ class RepList(Page):
             '//text[contains(text(), "@myfloridahouse.gov")]/text()'))
 
     def handle_list_item(self, item):
-        link = item.xpath('.//div[contains(@class, "rep_style")]/a')[0]
-        name = link.text_content().strip()
+        link = item.xpath('./a')[0]
+        info = link.xpath('./div[@class="team-txt"]')[0]
+        name = info.xpath('./h5/text()')[0].strip()
 
-        if 'Vacant' in name or 'Resigned' in name or 'Pending' in name:
+        info_text = info.text_content()
+
+        if 'Vacant' in info_text or 'Resigned' in info_text or 'Pending' in info_text:
             return
 
-        party = item.xpath('.//div[contains(@class, "party_style")]/text()')[0].strip()
-        party = {'D': 'Democratic', 'R': 'Republican'}[party]
+        if 'Republican' in info_text:
+            party = 'Republican'
+        elif 'Democrat' in info_text:
+            party = 'Democratic'
+        else:
+            print("No party found!", info_text)
 
-        district = item.xpath('.//div[contains(@class, "district_style")]/text()')[0].strip()
+        district = re.search(r'District: (\d+)', info_text).group(1)
 
         leg_url = link.get('href')
         split_url = parse.urlsplit(leg_url)
         member_id = parse.parse_qs(split_url.query)['MemberId'][0]
         image = "http://www.flhouse.gov/FileStores/Web/Imaging/Member/{}.jpg".format(member_id)
 
+        orig_name = name
         name = fix_name(name)
         rep = Person(name=name, district=district, party=party, primary_org='lower',
                      role='Representative', image=image)
@@ -152,7 +160,7 @@ class RepList(Page):
 
         # deal with some stuff that ends up in name that won't work in
         # email, spaces, quotes, high latin1
-        email_name = rep.name.replace('"', '')\
+        email_name = orig_name.replace('"', '')\
                              .replace("La ", "La")\
                              .replace("ñ", "n")
         (last, *other) = re.split(r'[-\s,]+', email_name)
