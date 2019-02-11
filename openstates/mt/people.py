@@ -1,6 +1,3 @@
-import re
-import csv
-from urllib import parse
 import lxml.html
 from pupa.scrape import Person, Scraper
 
@@ -20,22 +17,10 @@ SESSION_NUMBERS = {
 
 class MTPersonScraper(Scraper):
 
-    def url_xpath(self, url):
-        # Montana's legislator page was returning valid content with 500
-        # code as of 1/9/2013. Previous discussions with them after similar
-        # incidents in the past suggest some external part of their stack
-        # is having some issue and the error is bubbling up to the ret code.
-        self.raise_errors = False
-        html = self.get(url).text
-        doc = lxml.html.fromstring(html)
-        self.raise_errors = True
-        return doc
+    _roster_url = 'https://leg.mt.gov/legislator-information/?session_select={}'
+    _chamber_map = dict(lower='HD', upper='SD')
 
     def scrape(self, chamber=None, session=None):
-        if not session:
-            session = max(SESSION_NUMBERS.keys())
-        session_number = SESSION_NUMBERS[session]
-
         chambers = [chamber] if chamber else ['upper', 'lower']
 
         for chamber in chambers:
