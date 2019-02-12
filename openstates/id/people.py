@@ -48,7 +48,9 @@ def get_address(el):
         piece = (br.tail or '').strip()
         res = address_pattern.search(piece)
         if res is not None:
-            return address_replace_pattern.sub(r'ID \1', piece).strip()
+            if not re.search(r'\bID\b', piece):
+                piece = address_replace_pattern.sub(r'ID \1', piece).strip()
+            return piece
 
 
 class IDPersonScraper(Scraper):
