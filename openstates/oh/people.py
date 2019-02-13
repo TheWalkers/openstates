@@ -22,13 +22,17 @@ SUBCOMMITTEES = {
     # The House has mostly Finance, but also one more
     "Community and Family Advancement Subcommittee on Minority Affairs":
         "Community and Family Advancement",
-    "Finance Subcommittee on Agriculture Development and Natural Resources":
+    "Finance Subcommittee on Agriculture, Development, and Natural Resources":
         "Finance",
     "Finance Subcommittee on Health and Human Services": "Finance",
     "Finance Subcommittee on Higher Education": "Finance",
     "Finance Subcommittee on Primary and Secondary Education": "Finance",
     "Finance Subcommittee on Transportation": "Finance",
-    "Finance Subcommittee on State Government and Agency Review": "Finance"
+    "Finance Subcommittee on State Government and Agency Review": "Finance",
+
+    "Criminal Justice Subcommittee on Criminal Sentencing": "Criminal Justice",
+    "Energy and Natural Resources Subcommittee on Energy Generation":
+        "Energy and Natural Resources",
 }
 
 CHAMBER_URLS = {
