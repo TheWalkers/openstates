@@ -163,9 +163,10 @@ class Louisiana(Jurisdiction):
         {
             "_scraped_name": "2019 Regular Session",
             "classification": "primary",
-            "identifier": "2019 Regular Session",
+            "identifier": "2019",
             "name": "2019 Regular Session",
-            "start_date": "2019-04-18",
+            "start_date": "2019-04-08",
+            "end_date": "2019-06-06",
         },
     ]
     ignored_scraped_sessions = [
