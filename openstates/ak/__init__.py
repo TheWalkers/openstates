@@ -77,11 +77,6 @@ class Alaska(Jurisdiction):
         return [session['_scraped_name']
                 for session in self.legislative_sessions]
         return url_xpath(
-<<<<<<< HEAD
-            'http://www.akleg.gov/basis/Home/Archive',
-            "//div[@id='fullpage']//a[contains(@href, 'BillsandLaws')]/text()"
-=======
             'https://www.akleg.gov/basis/Home/Archive',
             '//div[@id="fullpage"]//a[contains(@href, "/BillsandLaws/")]//text()'
->>>>>>> upstream/master
         )
