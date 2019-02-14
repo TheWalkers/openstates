@@ -39,8 +39,10 @@ class INPersonScraper(Scraper):
             api_link = api_base_url+link
             html_link = base_url+link.replace("legislators/", "legislators/legislator_")
             try:
-                html = get_with_increasing_timeout(self, html_link, fail=True,
-                                                   kwargs={"verify": False})
+                headers = {'User-Agent': client.user_agent}
+                html = get_with_increasing_timeout(
+                    self, html_link, fail=True,
+                    kwargs={"verify": False, "headers": headers})
             except scrapelib.HTTPError:
                 self.logger.warning("Legislator's page is not available.")
                 continue
