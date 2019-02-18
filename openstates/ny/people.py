@@ -336,6 +336,7 @@ class NYPersonScraper(Scraper, LXMLMixin):
         if email_node is not None:
             email_text = email_node.attrib['href']
             email = re.sub(r'^mailto:', '', email_text)
+            email = re.sub(r'; .*', '', email)  # remove extraneous text
             person.add_contact_detail(type='email', value=email,
                                       note='Capitol Office')
 
