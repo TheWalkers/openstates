@@ -2,6 +2,7 @@ import collections
 import logging
 import lxml.html
 import re
+from datetime import date
 
 from pupa.scrape import Person, Scraper
 from spatula import Page, CSV, Spatula
@@ -109,6 +110,12 @@ class RepList(Page):
 
         name_match = re.match(r'^(.+)\(([0-9]{2}[AB]), ([A-Z]+)\)$', name_text)
         name = name_match.group(1).strip()
+
+        if date.today() > date(2019, 6, 1):
+            raise Exception("Check to see if this special case can be removed!")
+        if name == 'Jason Rarick':  # has moved on to senate, site not updated
+            return
+
         district = name_match.group(2).lstrip('0').upper()
         party_text = name_match.group(3)
         party = PARTIES[party_text]
