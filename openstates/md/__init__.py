@@ -4,7 +4,7 @@ from openstates.utils import url_xpath
 
 from .bills import MDBillScraper
 from .people import MDPersonScraper
-from .events import MDEventScraper
+# from .events import MDEventScraper
 # from .committees import MDCommitteeScraper
 
 
@@ -16,7 +16,7 @@ class Maryland(Jurisdiction):
     scrapers = {
         'bills': MDBillScraper,
         'people': MDPersonScraper,
-        'events': MDEventScraper,
+        # 'events': MDEventScraper,
         # 'committees': MDCommitteeScraper,
     }
     legislative_sessions = [

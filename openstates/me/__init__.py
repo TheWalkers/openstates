@@ -3,7 +3,7 @@ from openstates.utils import url_xpath
 
 from .bills import MEBillScraper
 from .people import MEPersonScraper
-from .events import MEEventScraper
+# from .events import MEEventScraper
 
 # from .committees import MECommitteeScraper
 
@@ -16,7 +16,7 @@ class Maine(Jurisdiction):
     scrapers = {
         'bills': MEBillScraper,
         'people': MEPersonScraper,
-        'events': MEEventScraper,
+        # 'events': MEEventScraper,
         # 'committees': MECommitteeScraper,
     }
     legislative_sessions = [
