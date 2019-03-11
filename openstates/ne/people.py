@@ -26,7 +26,7 @@ class NEPersonScraper(Scraper, LXMLMixin):
                 info_node = self.get_node(
                     page,
                     '//div[@class="container view-front"]'
-                    '//div[@class="col-sm-4 col-md-3 ltc-col-right"]'
+                    '//div[@class="col-sm-8 col-md-4 col-lg-3"]'
                     '/div[@class="block-box"]',
                 )
 
