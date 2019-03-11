@@ -115,8 +115,23 @@ class LAPersonScraper(Scraper, LXMLMixin):
         }
         party_info = page.xpath(
             '//span[@id="body_FormView5_PARTYAFFILIATIONLabel"]/text()'
-            )[0].strip()
-        party = party_flags[party_info]
+            )
+
+        if name == 'Ryan Bourriaque':
+            if party_info:
+                raise Exception("Remove special case for Ryan Bourriaque")
+            else:
+                party = 'Republican'
+
+        elif name == 'Mike Johnson':
+            if party_info:
+                raise Exception("Remove special case for Mike Johnson")
+            else:
+                party = 'Republican'
+
+        else:
+            party = party_flags[party_info[0].strip()]
+
         try:
             email = page.xpath(
                 '//span[@id="body_FormView6_EMAILADDRESSPUBLICLabel"]/text()'
