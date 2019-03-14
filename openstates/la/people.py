@@ -129,6 +129,12 @@ class LAPersonScraper(Scraper, LXMLMixin):
             else:
                 party = 'Republican'
 
+        elif name == 'Christopher Turner':
+            if party_info:
+                raise Exception("Remove special case for Christopher Turner")
+            else:
+                party = 'Republican'
+
         else:
             party = party_flags[party_info[0].strip()]
 
