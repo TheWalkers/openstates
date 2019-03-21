@@ -117,23 +117,11 @@ class LAPersonScraper(Scraper, LXMLMixin):
             '//span[@id="body_FormView5_PARTYAFFILIATIONLabel"]/text()'
             )
 
-        if name == 'Ryan Bourriaque':
+        if name == 'Ed Larvadain III':
             if party_info:
-                raise Exception("Remove special case for Ryan Bourriaque")
+                raise Exception("Remove special case for Ed Larvadain III")
             else:
-                party = 'Republican'
-
-        elif name == 'Mike Johnson':
-            if party_info:
-                raise Exception("Remove special case for Mike Johnson")
-            else:
-                party = 'Republican'
-
-        elif name == 'Christopher Turner':
-            if party_info:
-                raise Exception("Remove special case for Christopher Turner")
-            else:
-                party = 'Republican'
+                party = 'Democratic'
 
         else:
             party = party_flags[party_info[0].strip()]
