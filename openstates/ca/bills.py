@@ -315,6 +315,7 @@ class CABillScraper(Scraper):
                 'SB': 'bill',
                 'SCA': 'constitutional amendment',
                 'SCR': 'concurrent resolution',
+                'SJR': 'joint resolution',
                 'SR': 'resolution',
             }
         }
@@ -342,6 +343,10 @@ class CABillScraper(Scraper):
             bill_id = bill.short_bill_id
 
             fsbill = Bill(bill_id, session, title='', chamber=chamber)
+            if ((bill_id.startswith('S') and chamber == 'lower') or
+                    (bill_id.startswith('A') and chamber == 'upper')):
+                print("!!!! BAD ID/CHAMBER PAIR !!!!", bill)
+                continue
 
             # # Construct session for web query, going from '20092010' to '0910'
             # source_session = session[2:4] + session[6:8]

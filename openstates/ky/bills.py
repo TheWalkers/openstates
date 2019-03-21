@@ -1,5 +1,6 @@
 import re
 import datetime
+import scrapelib
 from collections import defaultdict
 from pytz import timezone
 
@@ -101,7 +102,7 @@ class KYBillScraper(Scraper, LXMLMixin):
             )
             action_date = self._TZ.localize(action_date)
 
-            action_texts = row.xpath('td[1]/ul/li/text()')
+            action_texts = row.xpath('td[1]/ul/li/text() | td[1]/ul/li/strong/text()')
 
             for action_text in action_texts:
                 action_text = action_text.strip()
@@ -122,7 +123,11 @@ class KYBillScraper(Scraper, LXMLMixin):
         return page.xpath(xpath_expr)[0]
 
     def parse_bill(self, chamber, session, bill_id, url):
-        page = self.lxmlize(url)
+        try:
+            page = self.lxmlize(url)
+        except scrapelib.HTTPError as e:
+            self.logger.warning(e)
+            return
 
         last_action = self.parse_bill_field(
             page, 'Last Action').xpath('text()')[0]
