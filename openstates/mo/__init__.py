@@ -2,8 +2,8 @@ from pupa.scrape import Jurisdiction, Organization
 
 from openstates.utils import url_xpath
 
-from openstates.mo.bills import MOBillScraper
-from openstates.mo.events import MOEventScraper
+#from openstates.mo.bills import MOBillScraper
+#from openstates.mo.events import MOEventScraper
 # from openstates.mo.votes import MOVoteScraper
 from openstates.mo.people import MOPersonScraper
 # from openstates.mo.committees import MOCommitteeScraper
@@ -15,9 +15,9 @@ class Missouri(Jurisdiction):
     name = "Missouri"
     url = "http://www.moga.mo.gov/"
     scrapers = {
-        'bills': MOBillScraper,
+#        'bills': MOBillScraper,
         # 'votes': MOVoteScraper,
-        'events': MOEventScraper,
+#        'events': MOEventScraper,
         'people': MOPersonScraper,
         # 'committees': MOCommitteeScraper,
     }
