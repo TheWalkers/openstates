@@ -117,14 +117,7 @@ class LAPersonScraper(Scraper, LXMLMixin):
             '//span[@id="body_FormView5_PARTYAFFILIATIONLabel"]/text()'
             )
 
-        if name == 'Ed Larvadain III':
-            if party_info:
-                raise Exception("Remove special case for Ed Larvadain III")
-            else:
-                party = 'Democratic'
-
-        else:
-            party = party_flags[party_info[0].strip()]
+        party = party_flags[party_info[0].strip()]
 
         try:
             email = page.xpath(
