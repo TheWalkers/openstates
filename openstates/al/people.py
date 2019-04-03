@@ -75,6 +75,15 @@ class ALPersonScraper(Scraper, LXMLMixin):
             if 'vacant' in name_text:
                 continue
 
+            photo_url = self.get_node(
+                legislator_page,
+                '//input[@id="ContentPlaceHolder1_TabSenator_TabLeg_imgLEG"]'
+                '/@src')
+
+            # Another check for vacant seats
+            if "VACANT.jpeg" in photo_url or "pending.jpeg" in photo_url:
+                continue
+
             # Removes titles and nicknames.
             name = html_parser.unescape(
                 re.sub(
@@ -134,11 +143,6 @@ class ALPersonScraper(Scraper, LXMLMixin):
                 info_node,
                 './tr[11]/td[2]',
             ).text_content()
-
-            photo_url = self.get_node(
-                legislator_page,
-                '//input[@id="ContentPlaceHolder1_TabSenator_TabLeg_imgLEG"]'
-                '/@src')
 
             # add basic leg info and main office
             person = Person(
