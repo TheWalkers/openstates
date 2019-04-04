@@ -44,6 +44,8 @@ class AZPersonScraper(Scraper):
 
             if email.attrib.get('class') == 'vacantmember':
                 continue  # Skip any vacant members.
+            elif "Resigned" in email.text_content():
+                continue
 
             link = name.xpath('string(a/@href)')
             if len(name) == 1:
