@@ -63,7 +63,8 @@ class MAPersonScraper(Scraper):
             chamber_type = 'House'
 
         url = "https://malegislature.gov/People/%s" % chamber_type
-        page = self.get(url).text
+        # skip SSL verify: bad cert as of 2019-05-29
+        page = self.get(url, verify=False).text
         doc = lxml.html.fromstring(page)
         doc.make_links_absolute("https://malegislature.gov")
 
