@@ -27,6 +27,9 @@ class NCPersonScraper(Scraper):
         for row in rows:
             party, district, _, _, full_name, counties = row.getchildren()
 
+            if 'Resigned' in full_name.text_content():
+                continue
+
             party = party.text_content().strip()
             party = dict(D='Democratic',
                          R='Republican')[party]
