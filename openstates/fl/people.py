@@ -2,6 +2,7 @@ import re
 import tempfile
 import lxml
 import logging
+import requests
 from urllib import parse
 from pupa.scrape import Scraper, Person
 from pupa.utils import convert_pdf
@@ -84,6 +85,13 @@ class SenList(Page):
         name = ' '.join(parts)
         leg = Person(name=name, district=district, party=party,
                      primary_org='upper', role='Senator')
+
+        response = requests.head(leg_url)
+        if 300 <= response.status_code < 400:
+            leg_url = response.headers['Location']
+            if leg_url.startswith('/'):
+                leg_url = 'https://www.flsenate.gov' + leg_url
+
         leg.add_link(leg_url)
         leg.add_source(self.url)
         leg.add_source(leg_url)
