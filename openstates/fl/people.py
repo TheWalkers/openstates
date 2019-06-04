@@ -63,7 +63,7 @@ class SenDetail(Page):
 
 class SenList(Page):
     url = "http://www.flsenate.gov/Senators/"
-    list_xpath = "//a[contains(@href, 'Senators/s')]"
+    list_xpath = "//a[@class='senatorLink']"
 
     def handle_list_item(self, item):
         name = " ".join(item.xpath('.//text()'))
