@@ -48,7 +48,8 @@ class NCPersonScraper(Scraper):
 
             address = capitol_address = phone = capitol_phone = email = None
 
-            # column 0 has an inline picture, no usable photo url
+            # column 0 has a link to the member photo
+            photo_url = cols[0].xpath("figure/a/@href")[0]
 
             # column 1 has addresses
             addr_ps = cols[1].xpath('//h6[contains(text(), "Mailing Address:")]/following-sibling::p')
@@ -83,7 +84,7 @@ class NCPersonScraper(Scraper):
 
             # save legislator
             person = Person(name=full_name, district=district,
-                            party=party, primary_org=chamber)
+                            party=party, primary_org=chamber, image=photo_url)
             person.extras['counties'] = [c.strip() for c in counties.text_content().split(',')]
             person.add_link(link)
             person.add_source(link)
