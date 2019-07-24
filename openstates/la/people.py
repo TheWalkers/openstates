@@ -117,7 +117,13 @@ class LAPersonScraper(Scraper, LXMLMixin):
             '//span[@id="body_FormView5_PARTYAFFILIATIONLabel"]/text()'
             )
 
-        party = party_flags[party_info[0].strip()]
+        try:
+            party = party_flags[party_info[0].strip()]
+        except KeyError:
+            if name == 'James H. "Jim" Morris':
+                party = 'Republican'
+            else:
+                raise
 
         try:
             email = page.xpath(
