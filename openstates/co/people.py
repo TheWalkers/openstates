@@ -49,11 +49,19 @@ class COLegislatorScraper(Scraper, LXMLMixin):
             for row in filtered_legislators_page.xpath('//table//tr'):
                 legislator, profile_url = table_row_to_legislator_and_profile_url(row, chamber)
                 legislator_profile_page = self.lxmlize(profile_url)
+                if legislator_resigned(legislator_profile_page):
+                    continue
                 legislator.image = get_photo_url(legislator_profile_page)
                 legislator.add_source(profile_url)
                 legislator.add_source(self.legislators_url)
                 legislator.add_link(profile_url)
                 yield legislator
+
+
+def legislator_resigned(legislator_profile_page):
+    return 'resigned' in legislator_profile_page.xpath(
+        '//div[contains(@class, "legislator-description")]'
+    )[0].text_content().lower()
 
 
 def co_address_from_role(role):
