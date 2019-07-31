@@ -6,8 +6,9 @@ base_url = 'http://www.nmlegis.gov/Members/Legislator_List'
 
 
 def extract_phone_number(phone_number):
-    phone_pattern = re.compile(r'(\(?\d{3}\)?\s?-?)?(\d{3}-?\d{4})')
-    return phone_pattern.search(phone_number).groups()
+    match = re.search(r'(\(?\d{3}\)?\s?-?)?(\d{3}-?\d{4})', phone_number)
+    if match:
+        return match.groups()
 
 
 class NMPersonScraper(Scraper, LXMLMixin):
@@ -138,8 +139,9 @@ class NMPersonScraper(Scraper, LXMLMixin):
             capitol_phone_text = capitol_phone_node.text
             if capitol_phone_text:
                 capitol_phone_text = capitol_phone_text.strip()
-                area_code, phone = extract_phone_number(capitol_phone_text)
-                if phone:
+                full_phone = extract_phone_number(capitol_phone_text)
+                if full_phone:
+                    area_code, phone = full_phone
                     capitol_phone = '{} {}'.format(
                         area_code.strip() if area_code else santa_fe_area_code,
                         phone)
