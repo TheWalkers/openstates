@@ -70,12 +70,15 @@ class INPersonScraper(Scraper):
                     email = decode_email(encoded)
 
                 elif chamber == 'upper':
-                    caucus_html = get_with_increasing_timeout(
-                        self, email_link, fail=True, kwargs={"verify": False})
-                    caucus_doc = lxml.html.fromstring(caucus_html.text)
-                    email_me = caucus_doc.xpath('//a[@class="email-me"]/@href')
-                    if email_me:
-                        email = email_me[0].replace('mailto:', '').strip()
+                    if email_link.startswith("mailto:"):
+                        email = email_link[7:]
+                    else:
+                        caucus_html = get_with_increasing_timeout(
+                            self, email_link, fail=True, kwargs={"verify": False})
+                        caucus_doc = lxml.html.fromstring(caucus_html.text)
+                        email_me = caucus_doc.xpath('//a[@class="email-me"]/@href')
+                        if email_me:
+                            email = email_me[0].replace('mailto:', '').strip()
 
             if not email:  # still no? make it up
                 prefix = 's' if chamber == 'upper' else 'h'
