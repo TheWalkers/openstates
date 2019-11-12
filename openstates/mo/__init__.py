@@ -39,6 +39,7 @@ class Missouri(Jurisdiction):
         },
     ]
     ignored_scraped_sessions = [
+        '2020 Regular Session',
         '2018 Regular Session',
         '2018 Special Session',
         '2018 1st Extraordinary Session',

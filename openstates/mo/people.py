@@ -11,10 +11,10 @@ class MOPersonScraper(Scraper):
     # ^^^^^^^^^^^ pre-2013 URL. Keep if we need to scrape old pages.
     # _senators_url = 'http://www.senate.mo.gov/CurrentRoster.htm'
     # ^^^^^^^^^^^ pre-2017 URL. Keep if we need to scrape the old pages.
-    _senators_url = 'http://www.senate.mo.gov/senators-listing/'
-    _senator_details_url = 'http://www.senate.mo.gov/mem{:02d}'
-    _reps_url = 'http://house.mo.gov/MemberGridCluster.aspx'
-    _rep_details_url = 'http://www.house.mo.gov/MemberDetails.aspx?district={}'
+    _senators_url = 'https://www.senate.mo.gov/senators-listing/'
+    _senator_details_url = 'https://www.senate.mo.gov/mem{:02d}'
+    _reps_url = 'https://house.mo.gov/MemberGridCluster.aspx'
+    _rep_details_url = 'https://www.house.mo.gov/MemberDetails.aspx?district={}'
     _vacant_legislators = []
 
     def _save_vacant_legislator(self, leg):
