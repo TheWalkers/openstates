@@ -1,7 +1,9 @@
 import re
 import datetime
+from itertools import chain
 
 from pupa.scrape import Person, Scraper
+from pupa.utils.generic import convert_pdf
 from openstates.utils import LXMLMixin, validate_phone_number
 
 
@@ -22,6 +24,33 @@ class NYPersonScraper(Scraper, LXMLMixin):
             else:
                 data.append(element)
 
+    def _scrape_from_pdf(self):
+        # FIXME: change for other years
+        pdf_url = 'https://www.elections.ny.gov/NYSBOE/Elections/2019/ElectedOfficials.pdf'
+        filename, response = self.urlretrieve(pdf_url)
+        text = convert_pdf(filename, type='text')
+        columns = []
+        lines = iter(text.decode().split("\n"))
+        for ln in lines:
+            if 'ELECTED REPRESENTATIVES FOR NEW YORK STATE' in ln:
+                next(lines)
+                next(lines)
+            else:
+                columns.append(ln)
+
+        serial = chain(
+            (ln[:40].strip() for ln in columns),
+            (ln[40:].strip() for ln in columns))
+
+        for ln in serial:
+            if not ln:
+                continue
+            section = []
+            while ln:
+                section.append(ln)
+                ln = next(serial)
+            yield section
+
     def _identify_party(self):
         """
         Get the best available information on New York political party
@@ -36,89 +65,19 @@ class NYPersonScraper(Scraper, LXMLMixin):
         NY_STATE_SENATE_SEATS = 63
         NY_STATE_ASSEMBLY_SEATS = 150
 
-        # Download the page and ingest using lxml
-        MEMBER_LIST_URL = 'http://www.elections.ny.gov:8080/reports/rwservlet'\
-            '?cmdkey=nysboe_incumbnt'
-
-        member_list_page = self.lxmlize(MEMBER_LIST_URL)
-
-        # Map district to party affiliation
-        congressional_affiliations = {}
-        senate_affiliations = {}
         assembly_affiliations = {}
-        district = None
-        capture_district = False
-        capture_party = False
-
-        affiliation_text = self.get_nodes(
-            member_list_page,
-            '/html/body/table/tr/td/font[@color="#0000ff"]/b/text()')
-        for affiliation in affiliation_text:
-            if capture_district and capture_party:
-                raise AssertionError(
-                    'Assembly party parsing simultaneously'
-                    'looking for both district number and party name.')
-
-            # Replace non-breaking spaces.
-            affiliation = re.sub(r'\xa0', ' ', affiliation)
-
-            # Ignore header text when parsing.
-            try:
-                datetime.datetime.strptime(affiliation, "%B %d, %Y")
-                is_date = True
-            except ValueError:
-                is_date = False
-
-            if is_date:
+        for r in self._scrape_from_pdf():
+            m = re.match(r'Member of Assembly (\d+)', r[0])
+            if not m:
                 continue
-            if affiliation == 'Elected Representatives for New York State by Office and District':
-                continue
-            # Otherwise, check to see if a District or Party is indicated.
-            elif affiliation == 'District : ':
-                capture_district = True
-                continue
-            elif affiliation == 'Party : ':
-                capture_party = True
-                continue
+            district = m.group(1)
+            _, _, party = r[1].partition(': ')
 
-            # If a search has been initiated for District or Party, then
-            # capture them.
-            if capture_district:
-                district = affiliation
-                assert district, 'No district found.'
-                capture_district = False
-            elif capture_party:
-                # Skip capturing districts of members who are at-large, such as
-                # governor.
-                if not district:
-                    capture_party = False
-                    continue
+            assert party, 'No party is indicated for district {}'.format(district)
+            assert int(district) <= NY_STATE_ASSEMBLY_SEATS, "bad district id {}".format(district)
+            assert district not in assembly_affiliations, "Too many entries for district {}".format(district)
 
-                assert affiliation, 'No party is indicated for district {}'.format(district)
-
-                # Districts listed in order: Congressional, State Senate,
-                # then State Assembly.
-                # If a repeat district is seen, assume it's from the
-                # next body in that list.
-                if (int(district) <= NY_US_HOUSE_SEATS and
-                        not congressional_affiliations.get(district)):
-                    congressional_affiliations[district] = affiliation.title()
-                elif (int(district) <= NY_STATE_SENATE_SEATS and
-                        not senate_affiliations.get(district)):
-                    senate_affiliations[district] = affiliation.title()
-                elif (int(district) <= NY_STATE_ASSEMBLY_SEATS and
-                        not assembly_affiliations.get(district)):
-                    assembly_affiliations[district] = affiliation.title()
-                else:
-                    message = 'District {} appears too many times in party '\
-                        'document.'
-                    raise AssertionError(message.format(district))
-
-                district = None
-                capture_party = False
-            else:
-                message = 'Assembly party parsing found bad text: "{}"'
-                raise AssertionError(message.format(affiliation))
+            assembly_affiliations[district] = party
 
         return assembly_affiliations
 
