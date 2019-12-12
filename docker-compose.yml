@@ -10,13 +10,15 @@ services:
     environment:
     - MYSQL_HOST=mysql
     - DATABASE_URL=postgres://openstates:openstates@db/openstatesorg
+    - PYTHONPATH=./openstates
     - NEW_YORK_API_KEY
     - INDIANA_API_KEY
     - USER_AGENT
     - PUPA_ARGS
     volumes:
     - .:/opt/openstates/openstates/
-    entrypoint: /opt/openstates/openstates/pupa-scrape.sh
+    entrypoint: ["poetry", "run", "pupa", "update"]
+
     networks:
     - openstates-network
   mysql:
