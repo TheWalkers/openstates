@@ -124,6 +124,8 @@ class MSLegislatorScraper(Scraper):
                 party = 'Democratic'
             elif party == 'R':
                 party = 'Republican'
+            elif party == 'I':
+                party = 'Independent'
             else:
                 raise AssertionError(
                     "A member with no identifiable party was found: {}".format(leg_name))
