@@ -21,7 +21,7 @@ class Massachusetts(Jurisdiction):
         "people": MAPersonScraper,
         # 'committees': MACommitteeScraper,
         "bills": MABillScraper,
-        # 'events': MAEventScraper,
+        # "events": MAEventScraper,
     }
     legislative_sessions = [
         {

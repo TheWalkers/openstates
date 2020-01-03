@@ -138,6 +138,11 @@ class ALPersonScraper(Scraper, LXMLMixin):
 
             email_address = self.get_node(info_node, "./tr[11]/td[2]").text_content()
 
+            photo_url = self.get_node(
+                legislator_page,
+                '//input[@id="ContentPlaceHolder1_TabSenator_TabLeg_imgLEG"]' "/@src",
+            )
+
             # add basic leg info and main office
             person = Person(
                 name=full_name,

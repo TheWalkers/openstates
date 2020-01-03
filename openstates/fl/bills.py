@@ -493,7 +493,7 @@ class HouseBillPage(Page):
 
 class HouseComVote(Page):
     def handle_page(self):
-        date, = self.doc.xpath('//span[contains(@id, "lblDate")]/text()')
+        (date,) = self.doc.xpath('//span[contains(@id, "lblDate")]/text()')
         date = format_datetime(
             datetime.datetime.strptime(date, "%m/%d/%Y %I:%M:%S %p"), "US/Eastern"
         )
@@ -505,8 +505,8 @@ class HouseComVote(Page):
         )
         result = "pass" if yes_count > no_count else "fail"
 
-        committee, = self.doc.xpath('//span[contains(@id, "lblCommittee")]/text()')
-        action, = self.doc.xpath('//span[contains(@id, "lblAction")]/text()')
+        (committee,) = self.doc.xpath('//span[contains(@id, "lblCommittee")]/text()')
+        (action,) = self.doc.xpath('//span[contains(@id, "lblAction")]/text()')
         motion = "{} ({})".format(action, committee)
 
         vote = VoteEvent(
@@ -526,8 +526,8 @@ class HouseComVote(Page):
             if not member_vote.text_content().strip():
                 continue
 
-            member, = member_vote.xpath("span[2]//text()")
-            member_vote, = member_vote.xpath("span[1]//text()")
+            (member,) = member_vote.xpath("span[2]//text()")
+            (member_vote,) = member_vote.xpath("span[1]//text()")
 
             if member_vote == "Y":
                 vote.yes(member)

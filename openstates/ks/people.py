@@ -40,14 +40,13 @@ class KSPersonScraper(Scraper, LXMLMixin):
 
         try:
             legislator_page = self.lxmlize(leg_url)
-            photo_url, = legislator_page.xpath('//img[@class="profile-picture"]/@src')
+            (photo_url,) = legislator_page.xpath('//img[@class="profile-picture"]/@src')
         except scrapelib.HTTPError:
             self.warning(
                 "{}'s legislator bio page not found".format(content["FULLNAME"])
             )
             leg_url = ""
             photo_url = ""
-
         name = content["FULLNAME"]
         name = re.sub("\s+", " ", name)
 
@@ -58,6 +57,7 @@ class KSPersonScraper(Scraper, LXMLMixin):
             party=party,
             image=photo_url,
         )
+        person.extras = {"occupation": content["OCCUPATION"]}
 
         address = "\n".join(
             [

@@ -373,8 +373,8 @@ class DCBillScraper(Scraper):
             if "postponed" in motion.lower():
                 result = "Postponed"
                 status = (
-                    "pass"
-                )  # because we're talking abtout the motion, not the amendment
+                    "pass"  # because we're talking abtout the motion, not the amendment
+                )
             elif "tabled" in motion.lower():
                 result = "Tabled"
                 status = "pass"

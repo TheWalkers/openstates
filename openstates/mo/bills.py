@@ -507,14 +507,16 @@ class MOBillScraper(Scraper, LXMLMixin):
         )
 
         # check for cosponsors
-        sponsors_url, = bill_page.xpath("//a[contains(@href, 'CoSponsors.aspx')]/@href")
+        (sponsors_url,) = bill_page.xpath(
+            "//a[contains(@href, 'CoSponsors.aspx')]/@href"
+        )
         self._parse_cosponsors_from_bill(bill, sponsors_url)
 
         # actions_link_tag = bill_page.xpath('//div[@class="Sections"]/a')[0]
         # actions_link = '%s/%s' % (self._house_base_url,actions_link_tag.attrib['href'])
         # actions_link = re.sub("content", "print", actions_link)
 
-        actions_link, = bill_page.xpath(
+        (actions_link,) = bill_page.xpath(
             "//a[contains(@href, 'BillActions.aspx')]/@href"
         )
         yield from self._parse_house_actions(bill, actions_link)

@@ -105,9 +105,15 @@ class OHBillScraper(Scraper):
             all_analysis = self.get_other_data_source(first_page, base_url, "analysiss")
 
             for row in self.get_bill_rows(session):
-                spacer, number_link, _ga, title, primary_sponsor, status, spacer = row.xpath(
-                    "td"
-                )
+                (
+                    spacer,
+                    number_link,
+                    _ga,
+                    title,
+                    primary_sponsor,
+                    status,
+                    spacer,
+                ) = row.xpath("td")
 
                 # S.R.No.1 -> SR1
                 bill_id = number_link.text_content().replace("No.", "")

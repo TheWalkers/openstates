@@ -85,7 +85,9 @@ class AZPersonScraper(Scraper):
                 address = "House of Representatives\n"
             else:
                 address = "Senate\n"
-            address = address + "1700 West Washington\n" + room + "\nPhoenix, AZ 85007"
+            address = (
+                address + "1700 West Washington\n Room " + room + "\nPhoenix, AZ 85007"
+            )
 
             phone = phone.text_content().strip()
             if "602" not in re.findall(r"(\d+)", phone):

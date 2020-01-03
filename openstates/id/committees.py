@@ -4,8 +4,8 @@ import lxml.html
 
 
 _COMMITTEE_URL = (
-    "https://legislature.idaho.gov/committees/%scommittees/"
-)  # house/senate
+    "https://legislature.idaho.gov/committees/%scommittees/"  # house/senate
+)
 _JOINT_URL = "https://legislature.idaho.gov/sessioninfo/2017/joint/"
 
 _CHAMBERS = {"upper": "senate", "lower": "house"}

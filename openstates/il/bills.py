@@ -343,7 +343,7 @@ class IlBillScraper(Scraper):
             classification, related_orgs = _categorize_action(action)
 
             if related_orgs and any(c.startswith("committee") for c in classification):
-                (name, source), = [
+                ((name, source),) = [
                     (a.text, a.get("href"))
                     for a in action_elem.xpath("a")
                     if "committee" in a.get("href")
@@ -446,7 +446,7 @@ class IlBillScraper(Scraper):
                 chamber = link.xpath("../following-sibling::td/text()")[0].lower()
                 first_word = name.split()[0]
                 try:
-                    source, = [
+                    (source,) = [
                         url
                         for url, committee in committee_actors.items()
                         if committee.startswith(first_word) and chamber in url

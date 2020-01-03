@@ -108,4 +108,11 @@ class ARLegislatorScraper(Scraper):
         if email is not None:
             person.add_contact_detail(type="email", value=email, note="District Office")
 
+        try:
+            person.extras["occupation"] = re.search(
+                r"Occupation(.+)\r", info_box
+            ).group(1)
+        except AttributeError:
+            pass
+
         yield person

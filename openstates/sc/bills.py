@@ -201,9 +201,19 @@ class SCBillScraper(Scraper):
             if len(tds) != 11:
                 self.warning("irregular vote row: %s" % vurl)
                 continue
-            timestamp, motion, vote, yeas, nays, nv, exc, pres, abst, total, result = (
-                tds
-            )
+            (
+                timestamp,
+                motion,
+                vote,
+                yeas,
+                nays,
+                nv,
+                exc,
+                pres,
+                abst,
+                total,
+                result,
+            ) = tds
 
             timestamp = timestamp.text.replace(u"\xa0", " ")
             timestamp = datetime.datetime.strptime(timestamp, "%m/%d/%Y %H:%M %p")

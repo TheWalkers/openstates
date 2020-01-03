@@ -70,7 +70,7 @@ class IAPersonScraper(Scraper):
         }
         metainf = {}
 
-        table, = leg_page.xpath("//div[@class='legisIndent divideVert']/table")
+        (table,) = leg_page.xpath("//div[@class='legisIndent divideVert']/table")
         for row in table.xpath(".//tr"):
             try:
                 key, value = (x.text_content().strip() for x in row.xpath("./td"))
