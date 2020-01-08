@@ -86,7 +86,7 @@ class AZPersonScraper(Scraper):
             else:
                 address = "Senate\n"
             address = (
-                address + "1700 West Washington\n Room " + room + "\nPhoenix, AZ 85007"
+                address + "1700 West Washington\n" + room + "\nPhoenix, AZ 85007"
             )
 
             phone = phone.text_content().strip()
