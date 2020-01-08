@@ -35,6 +35,8 @@ class PALegislatorScraper(Scraper):
                 party = "Republican"
             elif party == "D":
                 party = "Democratic"
+            elif party == "I":
+                party = "Independent"
 
             url = link.get("href")
             leg_id = url.split("?id=")[1]
