@@ -31,6 +31,12 @@ class VTPersonScraper(Scraper, LXMLMixin):
                 self.info("skipping first Christopher Mattos record")
                 continue
 
+            terminated = info.get("TerminationReason")
+            if terminated:
+                self.info("Skipping legislator {} {} because '{}'".format(
+                    info["FirstName"], info["LastName"], terminated))
+                continue
+
             # Gather photo URL from the member's page
             member_url = "http://legislature.vermont.gov/people/single/{}/{}".format(
                 year_slug, info["PersonID"]
