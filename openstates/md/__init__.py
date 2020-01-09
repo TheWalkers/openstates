@@ -143,6 +143,14 @@ class Maryland(Jurisdiction):
             "name": "2019 Regular Session",
             "start_date": "2019-01-09",
         },
+        {
+            "_scraped_name": "2020 Regular Session",
+            "classification": "primary",
+            "end_date": "2020-04-06",
+            "identifier": "2020",
+            "name": "2020 Regular Session",
+            "start_date": "2020-01-09",
+        },
     ]
     ignored_scraped_sessions = [
         "1996 Regular Session",
@@ -177,5 +185,5 @@ class Maryland(Jurisdiction):
     def get_session_list(self):
         return url_xpath(
             "http://mgaleg.maryland.gov/webmga/frmLegislation.aspx?pid=legisnpage&tab=subject3",
-            '//select[contains(@name, "cboSession")]/option/text()',
+            '//select[@name="Session"]/option/text()',
         )
