@@ -25,7 +25,7 @@ class NYPersonScraper(Scraper, LXMLMixin):
                 data.append(element)
 
     def _scrape_from_pdf(self):
-        # FIXME: change for other years
+        # FIXME: change for other years (2019 URL still valid for 2020)
         pdf_url = (
             "https://www.elections.ny.gov/NYSBOE/Elections/2019/ElectedOfficials.pdf"
         )
@@ -71,6 +71,8 @@ class NYPersonScraper(Scraper, LXMLMixin):
         for r in self._scrape_from_pdf():
             m = re.match(r"Member of Assembly (\d+)", r[0])
             if not m:
+                continue
+            if r[2] == 'Vacant':
                 continue
             district = m.group(1)
             _, _, party = r[1].partition(": ")
