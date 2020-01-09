@@ -11,12 +11,16 @@ PARTIES = {"DFL": "Democratic-Farmer-Labor", "R": "Republican"}
 
 
 class SenList(CSV):
-    url = "http://www.senate.mn/members/member_list_ascii.php?ls="
-    _html_url = "http://www.senate.mn/members/index.php"
+    url = "https://www.senate.mn/members/member_list_ascii.php?ls="
+    _html_url = "https://www.senate.mn/members/index.php"
 
     def __init__(self, scraper, url=None, *, obj=None, **kwargs):
         super().__init__(scraper, url=url, obj=obj, **kwargs)
         self._scrape_extra_info()
+
+    def do_request(self):
+        # SSL not verified as of 2020-01-08
+        return self.scraper.get(self.url, verify=False)
 
     def _scrape_extra_info(self):
         self.extra_info = collections.defaultdict(dict)
