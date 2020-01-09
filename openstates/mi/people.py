@@ -86,18 +86,17 @@ class MIPersonScraper(Scraper):
         doc = lxml.html.fromstring(data)
         doc.make_links_absolute(url)
         for row in doc.xpath('//table[not(@class="calendar")]//tr')[1:]:
-            if len(row) != 7:
+            if len(row) != 6:
                 continue
 
-            # party, dist, member, office_phone, office_fax, office_loc
-            party, dist, member, contact, phone, fax, loc = row.getchildren()
+            member, party, dist, contact, phone, loc = row.getchildren()
             if (
                 party.text_content().strip() == ""
                 or "Lieutenant Governor" in member.text_content()
             ):
                 continue
 
-            party = abbr[party.text]
+            party = abbr[party.text[0]]
             district = dist.text_content().strip()
             name = member.text_content().strip()
             name = re.sub(r"\s+", " ", name)
@@ -119,8 +118,7 @@ class MIPersonScraper(Scraper):
                 continue
 
             leg_url = member.xpath("a/@href")[0]
-            office_phone = phone.text
-            office_fax = fax.text
+            office_phone = phone.text_content().strip()
 
             office_loc = loc.text
             office_loc = re.sub(
@@ -140,7 +138,7 @@ class MIPersonScraper(Scraper):
             # data has a typo in a row
             email = None
             contact_url = [
-                a for a in row.xpath(".//a") if a.text in ("Contact Me", "Conact Me")
+                a for a in row.xpath(".//a") if a.text == "Contact Info"
             ][0].get("href")
             try:
                 contact_html = self.get(contact_url).text
@@ -177,9 +175,6 @@ class MIPersonScraper(Scraper):
             )
             person.add_contact_detail(
                 type="voice", value=office_phone, note="Capitol Office"
-            )
-            person.add_contact_detail(
-                type="fax", value=office_fax, note="Capitol Office"
             )
             if email:
                 person.add_contact_detail(
