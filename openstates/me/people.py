@@ -40,6 +40,10 @@ class MEPersonScraper(Scraper):
             print("Member resigned {}".format(url))
             raise StopIteration  # don't yield anything
 
+        if "Deceased" in main.text_content():
+            print("Member is deceased {}".format(url))
+            raise StopIteration  # don't yield anything
+
         name = page.xpath('//div[@class="member-name"]/text()')[0].strip()
         name = re.sub(r"\s+", " ", name)
         district_number = page.xpath(
@@ -71,7 +75,8 @@ class MEPersonScraper(Scraper):
         )
 
         person.add_contact_detail(type="address", value=address, note="District Office")
-        person.add_contact_detail(type="email", value=email, note="District Office")
+        if email:
+            person.add_contact_detail(type="email", value=email, note="District Office")
 
         person.add_link(url)
         person.add_source(url)
