@@ -83,6 +83,9 @@ class OKPersonScraper(Scraper, LXMLMixin, LXMLMixinOK):
                 if re.search(r"District \d+", name_text):
                     continue
 
+                if name_text == 'Vacant':
+                    continue
+
                 last_name, delimiter, first_name = name_text.partition(",")
 
                 if last_name is not None and first_name is not None:
@@ -104,7 +107,6 @@ class OKPersonScraper(Scraper, LXMLMixin, LXMLMixinOK):
 
             if party_node is not None:
                 party_text = party_node.text.strip()
-
             party = self._parties[party_text]
 
             legislator_url = (
