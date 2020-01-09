@@ -71,6 +71,13 @@ class NMPersonScraper(Scraper, LXMLMixin):
 
         page = self.lxmlize(url)
 
+        if re.search(r"SponCode=HBARD$", url, re.IGNORECASE):
+            if 'No results found' in page.text_content():
+                self.warning("{} not working for Daniel Barrone".format(url))
+                return
+            else:
+                self.warning("{} is now working for Daniel Barrone, please remove this".format(url))
+
         info_node = self.get_node(page, '//table[@id="MainContent_formViewLegislator"]')
         if info_node is None:
             raise ValueError("Could not locate legislator data.")
