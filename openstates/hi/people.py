@@ -47,7 +47,7 @@ class HIPersonScraper(Scraper):
 
     def scrape_leg_page(self, url):
         page = self.get_page(url)
-        people = page.xpath("//table[@id='ContentPlaceHolderCol1_GridView1']")[0]
+        people = page.xpath("//table[@id='ctl00_ContentPlaceHolderCol1_GridView1']")[0]
         people = people.xpath("./tr")[1:]
         display_order = {"image": 0, "contact": 1, "district": 2}
 
