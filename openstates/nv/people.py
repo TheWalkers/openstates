@@ -46,6 +46,12 @@ class NVPeopleScraper(Scraper):
                 primary_org=chamber,
                 image=item["PhotoURL"],
             )
+            capitol_phone = item["LCBPhone"]
+            if capitol_phone:
+                person.add_contact_detail(
+                    type="voice", value=capitol_phone, note="Capitol Office"
+                )
+
             leg_url = leg_base_url + item["DistrictNbr"]
 
             # hack to get the legislator ID
