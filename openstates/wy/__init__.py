@@ -90,7 +90,6 @@ class Wyoming(Jurisdiction):
         },
     ]
     ignored_scraped_sessions = [
-        "2020",
         "2016",
         "2014",
         "2010",
