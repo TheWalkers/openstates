@@ -44,9 +44,10 @@ class LAPersonScraper(Scraper, LXMLMixin):
 
         phone_index = info.index("District Phone") + 1
         phone = info[phone_index]
-        assert (
-            sum(c.isdigit() for c in phone) == 10
-        ), "Phone number is invalid: {}".format(phone)
+        phone_digits = sum(c.isdigit() for c in phone)
+        if phone_digits != 10:
+            self.warning("Phone number is invalid: {}".format(phone))
+            phone = ""
 
         # Address exists for all lines between party and phone
         address = "\n".join(info[party_index + 2 : phone_index - 1])
@@ -57,13 +58,16 @@ class LAPersonScraper(Scraper, LXMLMixin):
 
         fax_index = info.index("Fax") + 1
         fax = info[fax_index]
-        assert sum(c.isdigit() for c in fax) == 10, "Fax number is invalid: {}".format(
-            fax
-        )
+        fax_digits = sum(c.isdigit() for c in fax)
+        if fax_digits != 10:
+            self.warning("fax number is invalid: {}".format(fax))
+            fax = ""
 
         email_index = info.index("E-mail Address") + 1
         email = info[email_index]
-        assert "@" in email, "Email info is not valid: {}".format(email)
+        if "@" not in email:
+            self.warning("Email info is not valid: {}".format(email))
+            email = ""
 
         person = Person(name=who, district=district, party=party, primary_org="upper")
 
@@ -104,6 +108,9 @@ class LAPersonScraper(Scraper, LXMLMixin):
             self.warning("Seat is vacant: {}".format(name))
             return
 
+        if name.endswith(", I"):
+            name = name[:-3]
+
         photo = page.xpath('//img[contains(@src, "/h_reps/RepPics")]')[0].attrib["src"]
         party_flags = {
             "Democrat": "Democratic",
@@ -137,6 +144,11 @@ class LAPersonScraper(Scraper, LXMLMixin):
         # whee, special case
         if leg_info["phone"] == "504-83POLLY (837-6559)":
             leg_info["phone"] = "504-837-6559"
+
+        # fix a typo
+        if leg_info["phone"].startswith("9225) "):
+            print("PHONE %r" % leg_info["phone"])
+            leg_info["phone"] = "(225) " + leg_info["phone"][6:]
 
         contacts = [
             (leg_info["office"], "address"),
