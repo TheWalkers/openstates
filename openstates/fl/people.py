@@ -134,14 +134,12 @@ class RepList(Page):
         """
         with tempfile.NamedTemporaryFile() as temp:
             self.scraper.urlretrieve(self.directory_pdf_url, temp.name)
-            directory = lxml.etree.fromstring(convert_pdf(temp.name, "xml"))
+            directory = convert_pdf(temp.name, "xml").decode('latin1')
 
         # pull out member email addresses from the XML salad produced
         # above - there's no obvious way to match these to names, but
         # fortunately they have names in them
-        return set(
-            directory.xpath('//text[contains(text(), "@myfloridahouse.gov")]/text()')
-        )
+        return set(re.findall(r'[\w.]+@myfloridahouse.gov', directory))
 
     def handle_list_item(self, item):
         link = item.xpath("./a")[0]
