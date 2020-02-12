@@ -96,6 +96,12 @@ _categorizer_rules = (
     Rule("Am. withdrawn", "amendment-withdrawal"),
     Rule("Divided committee report", "committee-passage"),
     Rule("Filed for intro.", ["introduction", "reading-1"]),
+    # TN has a process where it's 'passed' on each reading,
+    # Prior to committee referral/passage and chamber passage
+    # see http://www.capitol.tn.gov/about/billtolaw.html
+    # these don't fall under pupas committee-passage or passage classifications
+    Rule("Intro., P1C", ["introduction"]),
+    Rule("Introduced, Passed on First Consideration", ["introduction"]),
     Rule("Reported back amended, do not pass", "committee-passage-unfavorable"),
     Rule("Reported back amended, do pass", "committee-passage-favorable"),
     Rule("Rec. For Pass.", "committee-passage-favorable"),
@@ -348,6 +354,16 @@ class TNBillScraper(Scraper):
         if secondary_bill_id:
             bill.add_identifier(secondary_bill_id)
 
+        if page.xpath('//span[@id="lblCompNumber"]/a'):
+            companion_id = (
+                page.xpath('//span[@id="lblCompNumber"]/a')[0].text_content().strip()
+            )
+            bill.add_related_bill(
+                identifier=companion_id,
+                legislative_session=session,
+                relation_type="companion",
+            )
+
         bill.add_source(bill_url)
 
         # Primary Sponsor
@@ -410,8 +426,9 @@ class TNBillScraper(Scraper):
                 )
 
             # secondary actions
-            cotable = page.xpath("//table[@id='gvCoActionHistory']")[0]
-            actions_from_table(bill, cotable)
+            if page.xpath("//table[@id='gvCoActionHistory']"):
+                cotable = page.xpath("//table[@id='gvCoActionHistory']")[0]
+                actions_from_table(bill, cotable)
 
         # votes
         yield from self.scrape_vote_events(bill, page, bill_url)

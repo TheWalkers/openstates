@@ -1,6 +1,5 @@
 # encoding=utf-8
-from openstates.utils import url_xpath
-from pupa.scrape import Jurisdiction, Organization
+from openstates.utils import url_xpath, State
 from .bills import IlBillScraper
 from .people import IlPersonScraper
 from .events import IlEventScraper
@@ -8,11 +7,7 @@ from .events import IlEventScraper
 # from .committees import IlCommitteeScraper
 
 
-class Illinois(Jurisdiction):
-    division_id = "ocd-division/country:us/state:il"
-    classification = "government"
-    name = "Illinois"
-    url = "http://www.ilga.gov/"
+class Illinois(State):
     scrapers = {
         "bills": IlBillScraper,
         "people": IlPersonScraper,
@@ -20,6 +15,24 @@ class Illinois(Jurisdiction):
         # "committees": IlCommitteeScraper,
     }
     legislative_sessions = [
+        {
+            "name": "90th Regular Session",
+            "identifier": "90th",
+            "classification": "primary",
+            "_scraped_name": "90   (1997-1998)",
+        },
+        {
+            "name": "91st Regular Session",
+            "identifier": "91st",
+            "classification": "primary",
+            "_scraped_name": "91   (1999-2000)",
+        },
+        {
+            "name": "92nd Regular Session",
+            "identifier": "92nd",
+            "classification": "primary",
+            "_scraped_name": "92   (2001-2002)",
+        },
         {
             "name": "93rd Regular Session",
             "identifier": "93rd",
@@ -111,28 +124,7 @@ class Illinois(Jurisdiction):
         "87   (1991-1992)",
         "88   (1993-1994)",
         "89   (1995-1996)",
-        "90   (1997-1998)",
-        "91   (1999-2000)",
-        "92   (2001-2002)",
     ]
-
-    def get_organizations(self):
-        legis = Organization(
-            name="Illinois General Assembly", classification="legislature"
-        )
-
-        upper = Organization(
-            "Illinois Senate", classification="upper", parent_id=legis._id
-        )
-        lower = Organization(
-            "Illinois House of Representatives",
-            classification="lower",
-            parent_id=legis._id,
-        )
-
-        yield legis
-        yield upper
-        yield lower
 
     def get_session_list(self):
         return url_xpath("http://ilga.gov/PreviousGA.asp", "//option/text()")

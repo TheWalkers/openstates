@@ -1,5 +1,4 @@
-from openstates.utils import url_xpath
-from pupa.scrape import Jurisdiction, Organization
+from openstates.utils import url_xpath, State
 from .people import LAPersonScraper
 
 # from .committees import LACommitteeScraper
@@ -7,11 +6,7 @@ from .people import LAPersonScraper
 from .bills import LABillScraper
 
 
-class Louisiana(Jurisdiction):
-    division_id = "ocd-division/country:us/state:la"
-    classification = "government"
-    name = "Louisiana"
-    url = "http://www.legis.la.gov/"
+class Louisiana(State):
     scrapers = {
         "people": LAPersonScraper,
         # "committees": LACommitteeScraper,
@@ -169,6 +164,14 @@ class Louisiana(Jurisdiction):
             "start_date": "2019-04-08",
             "end_date": "2019-06-06",
         },
+        {
+            "_scraped_name": "2020 Regular Session",
+            "classification": "primary",
+            "identifier": "2020",
+            "name": "2020 Regular Session",
+            "start_date": "2020-03-09",
+            "end_date": "2020-06-01",
+        },
     ]
     ignored_scraped_sessions = [
         "2020 Organizational Session",
@@ -215,19 +218,6 @@ class Louisiana(Jurisdiction):
         "Other Sessions",
         "Sessions",
     ]
-
-    def get_organizations(self):
-        legislature_name = "Louisiana Legislature"
-
-        legislature = Organization(name=legislature_name, classification="legislature")
-        upper = Organization(
-            "Senate", classification="upper", parent_id=legislature._id
-        )
-        lower = Organization("House", classification="lower", parent_id=legislature._id)
-
-        yield legislature
-        yield upper
-        yield lower
 
     def get_session_list(self):
         return url_xpath(

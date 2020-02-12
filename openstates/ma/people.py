@@ -44,18 +44,12 @@ def clean_district(district):
 
 
 class MAPersonScraper(Scraper):
-    whipps_special_case_used = False
-
     def scrape(self, chamber=None):
         if not chamber:
             yield from self.scrape_chamber("upper")
             yield from self.scrape_chamber("lower")
         else:
             yield from self.scrape_chamber(chamber)
-        # Remove the code for special-casing if it's no longer necessary
-        assert (
-            self.whipps_special_case_used
-        ), "Special-casing of Susannah M. Whipps's party is no longer necessary; remove it"
 
     def scrape_chamber(self, chamber):
         if chamber == "upper":
@@ -64,7 +58,6 @@ class MAPersonScraper(Scraper):
             chamber_type = "House"
 
         url = "https://malegislature.gov/People/%s" % chamber_type
-        # skip SSL verify: bad cert as of 2019-05-29
         page = self.get(url, verify=False).text
         doc = lxml.html.fromstring(page)
         doc.make_links_absolute("https://malegislature.gov")
@@ -103,13 +96,8 @@ class MAPersonScraper(Scraper):
             party = "Democratic"
         elif party in ("R", "Republican"):
             party = "Republican"
-        elif party in ("I", "Independent"):
+        elif party in ("I", "Independent", "Unenrolled"):
             party = "Independent"
-        # Special-case a member who disenrolled from the Republican Party
-        # http://www.masslive.com/politics/index.ssf/2017/08/athol_rep_susannah_whipps_swit.html
-        elif full_name == "Susannah M. Whipps":
-            party = "Independent"
-            self.whipps_special_case_used = True
         else:
             raise ValueError("unknown party {}: {}".format(party, member_url))
 
