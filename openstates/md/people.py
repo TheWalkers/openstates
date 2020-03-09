@@ -77,11 +77,14 @@ class MDPersonScraper(Scraper):
                     line = line.replace("--", "-").replace("- ", "-")
                     fax = re.findall(r"Fax (\d{3}-\d{3}-\d{4})", line)[0]
 
-            email = ldoc.xpath('//a[contains(@href, "mailto:")]/@href')
-            if not email:
+            email_path = ldoc.xpath('//a[contains(@href, "mailto:")]/@href')
+            emails = set()
+            for path in email_path:
+                emails.add(re.match(r"mailto:([^?]+)", path).group(1))
+            if not emails:
                 email = None
-            elif len(email) == 1:
-                email = re.match(r"mailto:([^?]+)", email[0]).group(1)
+            elif len(emails) == 1:
+                email = emails.pop()
             else:
                 raise AssertionError("Multiple email links found on page")
 
