@@ -60,9 +60,13 @@ class PABillScraper(Scraper):
                 'div[@class="BillInfo-Section-Data"]',
             ]
         )
-        title = page.xpath(xpath).pop().text_content().strip()
-        if not title:
+
+        if page.xpath(xpath):
+            title = page.xpath(xpath).pop().text_content().strip()
+        else:
+            self.warning("Skipping {}, No title found".format(bill_id, url))
             return
+
         bill = Bill(
             bill_id,
             legislative_session=session,
@@ -355,7 +359,7 @@ class PABillScraper(Scraper):
         vote.set_count("other", other)
 
         for div in page.xpath('//*[contains(@class, "RollCalls-Vote")]'):
-            name = div.text_content().strip()
+            name = div[0].tail.strip()
             name = re.sub(r"^[\s,]+", "", name)
             name = re.sub(r"[\s,]+$", "", name)
             class_attr = div.attrib["class"].lower()
