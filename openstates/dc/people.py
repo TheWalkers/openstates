@@ -24,6 +24,8 @@ class DCPersonScraper(Scraper):
         assert len(urls) <= 13, "should have 13 unique councilmember URLs"
 
         for url in urls:
+            if 'vacant' in url:
+                continue
             data = self.get(url).text
             doc = lxml.html.fromstring(data)
             doc.make_links_absolute(url)
