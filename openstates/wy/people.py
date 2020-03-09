@@ -37,7 +37,7 @@ class WYPersonScraper(Scraper):
 
             party = self.party_map[row["party"]]
 
-            if details["dob"] is not None:
+            if details["dob"]:
                 dob = datetime.datetime.strptime(details["dob"], "%m/%d/%Y %I:%M:%S %p")
                 dob_str = datetime.datetime.strftime(dob, "%Y-%m-%d")
             else:
