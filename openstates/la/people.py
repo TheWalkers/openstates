@@ -16,9 +16,9 @@ class LAPersonScraper(Scraper, LXMLMixin):
         (who,) = [
             x
             for x in page.xpath("//tr/td/font/text()")
-            if x.strip().startswith("Senator ")
+            if x.strip().startswith("Senator ") or x.strip().startswith("President ")
         ]
-        who = re.search(r"(?u)^\s*Senator\s*(.*?)\s*$", who).group(1)
+        who = re.search(r"(?u)^\s*(?:Senator|President Pro Tempore)\s*(.*?)\s*$", who).group(1)
 
         if "Vacant" in who:
             return
