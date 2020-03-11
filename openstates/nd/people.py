@@ -15,14 +15,12 @@ class NDPersonScraper(Scraper):
         page = self.get(main_url).text
         page = lxml.html.fromstring(page)
         page.make_links_absolute(main_url)
-        for idx, person_url in enumerate(
-            page.xpath(
-                '//div[contains(@class, "all-members")]/' 'div[@class="name"]/a/@href'
-            )
-        ):
-            political_party = page.xpath(
-                '//div[contains(@class, "all-members")]/' 'div[@class="party"]/text()'
-            )[idx].strip()
+        for member_panel in page.xpath('//div[contains(@class, "all-members")]'):
+            status = member_panel.xpath('.//div[contains(@class, "status-fields")]')
+            if status and 'Resigned' in status[0].text_content():
+                continue
+            political_party = member_panel.xpath('div[@class="party"]/text()')[0].strip()
+            person_url = member_panel.xpath('div[@class="name"]/a/@href')[0]
             yield from self.scrape_legislator_page(term, person_url, political_party)
 
     def scrape_legislator_page(self, term, url, political_party):
