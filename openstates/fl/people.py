@@ -148,7 +148,8 @@ class RepList(Page):
 
         info_text = info.text_content()
 
-        if "Vacant" in info_text or "Resigned" in info_text or "Pending" in info_text:
+        if ("Vacant" in info_text or "Resigned" in info_text or
+                "Pending" in info_text or "Deceased" in info_text):
             return
 
         if "Republican" in info_text:
