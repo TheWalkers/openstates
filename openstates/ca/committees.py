@@ -29,7 +29,7 @@ class CACommitteeScraper(Scraper, LXMLMixin):
     def scrape(self, chamber=None):
         if chamber in ["lower", None]:
             yield from self.scrape_lower()
-        elif chamber in ["upper", None]:
+        if chamber in ["upper", None]:
             # Also captures joint committees
             yield from self.scrape_upper()
 
@@ -61,11 +61,6 @@ class CACommitteeScraper(Scraper, LXMLMixin):
             urls = div.xpath('descendant::span[@class="field-content"]/a/@href')
 
             for c, _url in zip(committees, urls):
-
-                if "autism" in _url:
-                    # The autism page takes a stunning 10 minutes to respond
-                    # with a 403. Skip it.
-                    continue
 
                 c = c.replace("Committee on ", "").replace(" Committee", "")
                 org = Organization(name=c, chamber=_chamber, classification="committee")
@@ -112,7 +107,7 @@ class CACommitteeScraper(Scraper, LXMLMixin):
                 n = re.search(r"^Subcommittee.*?on (.*)$", n).group(1)
                 org = Organization(
                     name=n,
-                    chamber="lower",
+                    parent="lower",
                     classification="committee",
                     parent_id={"name": committee, "classification": "lower"},
                 )
@@ -196,33 +191,29 @@ class CACommitteeScraper(Scraper, LXMLMixin):
             # the committee.
             (comm_name,) = committee.xpath("text()")
 
-            org = Organization(
-                chamber="upper", name=comm_name, classification="committee"
-            )
-
             (comm_url,) = committee.xpath("@href")
-            org.add_source(comm_url)
             comm_doc = self.lxmlize(comm_url)
 
             if comm_name.startswith("Joint"):
-                org["chamber"] = "legislature"
-                org["committee"] = (
-                    comm_name.replace("Joint ", "")
-                    .replace("Committee on ", "")
-                    .replace(" Committee", "")
+                org = Organization(
+                    chamber="legislature", classification="committee", name=comm_name
                 )
-
-            if comm_name.startswith("Subcommittee"):
-                (full_comm_name,) = comm_doc.xpath(
+            elif comm_name.startswith("Subcommittee"):
+                (parent_name,) = comm_doc.xpath(
                     '//div[@class="banner-sitename"]/a/text()'
                 )
-                full_comm_name = re.search(
-                    r"^Senate (.*) Committee$", full_comm_name
-                ).group(1)
-                org["committee"] = full_comm_name
+                (subcom_name,) = comm_doc.xpath('//h1[@class="title"]/text()')
+                org = Organization(
+                    name=subcom_name.strip(),
+                    classification="committee",
+                    parent_id={"name": parent_name, "classification": "upper"},
+                )
+            else:
+                org = Organization(
+                    chamber="upper", name=comm_name, classification="committee"
+                )
 
-                comm_name = re.search(r"^Subcommittee.*?on (.*)$", comm_name).group(1)
-                org["subcommittee"] = comm_name
+            org.add_source(comm_url)
 
             # Special case of members list being presented in text blob.
             member_blob = comm_doc.xpath(

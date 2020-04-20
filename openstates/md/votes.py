@@ -18,13 +18,10 @@ class MDVoteScraper(Scraper, LXMLMixin):
 
     def scrape_chamber(self, chamber, session):
         chamber_name = "senate" if chamber == "upper" else "house"
+        # despite visible pagination on page, the HTML seems to contain everything
         url = "http://mgaleg.maryland.gov/mgawebsite/FloorActions/Index/" + chamber_name
         doc = self.lxmlize(url)
         links = doc.xpath("//table[1]/tbody/tr/td[3]/a/@href")
-
-        # keep upping this number until we see them paginate
-        if len(links) > 60:
-            raise Exception("check for pagination")
 
         seen_urls = set()
 
@@ -133,11 +130,8 @@ class MDVoteScraper(Scraper, LXMLMixin):
         vote.set_count("absent", absent_count)
         for how, names in voters.items():
             for name in names:
-                if (
-                    name.strip()
-                    and "COPY" not in name
-                    and "Indicates Vote Change" not in name
-                ):
+                name = name.strip().replace("*", "")
+                if name and "COPY" not in name and "Indicates Vote Change" not in name:
                     vote.vote(how, name)
         check_counts(vote, raise_error=True)
         return vote

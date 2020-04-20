@@ -26,6 +26,8 @@ class Oklahoma(State):
             "_scraped_name": "2012 Regular Session",
             "identifier": "2011-2012",
             "name": "2011-2012 Regular Session",
+            "start_date": "2011-02-07",
+            "end_date": "2012-05-25",
         },
         {
             "_scraped_name": "2012 Special Session",
@@ -36,16 +38,22 @@ class Oklahoma(State):
             "_scraped_name": "2014 Regular Session",
             "identifier": "2013-2014",
             "name": "2013-2014 Regular Session",
+            "start_date": "2013-02-04",
+            "end_date": "2014-05-24",
         },
         {
             "_scraped_name": "2013 Special Session",
             "identifier": "2013SS1",
             "name": "2013 Special Session",
+            "start_date": "2013-09-02",
+            "end_date": "2013-09-09",
         },
         {
             "_scraped_name": "2016 Regular Session",
             "identifier": "2015-2016",
             "name": "2015-2016 Regular Session",
+            "start_date": "2015-02-02",
+            "end_date": "2016-05-27",
         },
         {
             "_scraped_name": "2017 First Special Session",
@@ -80,6 +88,13 @@ class Oklahoma(State):
             "identifier": "2020",
             "name": "2020 Regular Session",
             "start_date": "2019-02-03",
+        },
+        {
+            "_scraped_name": "2020 First Special Session",
+            "identifier": "2020SS1",
+            "name": "2020 First Special Session",
+            "start_date": "2020-04-02",
+            "end_date": "2020-04-03",
         },
     ]
     ignored_scraped_sessions = [
