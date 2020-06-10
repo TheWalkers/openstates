@@ -12,7 +12,7 @@ PARTIES = {"DFL": "Democratic-Farmer-Labor", "R": "Republican"}
 
 class SenList(CSV):
     url = "https://www.senate.mn/members/member_list_ascii.php?ls="
-    _html_url = "https://www.senate.mn/members/index.php"
+    _html_url = "https://www.senate.mn/members/index.html"
 
     def __init__(self, scraper, url=None, *, obj=None, **kwargs):
         super().__init__(scraper, url=url, obj=obj, **kwargs)
@@ -30,21 +30,22 @@ class SenList(CSV):
         doc.make_links_absolute(self._html_url)
         xpath = '//div[@id="alphabetically"]' '//div[@class="media my-3"]'
         for div in doc.xpath(xpath):
-            main_link, email_link = filter(
-                lambda link: link.get("href"), div.xpath(".//a")
-            )
-            name = main_link.text_content().split(" (")[0]
-            leg = self.extra_info[name]
+            email_link = div.xpath(".//a/@href")[0]
+            #name = main_link.text_content().split(" (")[0]
+            name_district = div.xpath(".//h5/b")[0].text_content()
+            name, district, party = re.match(r"([\w. ]+) \((\d+), (\w+)\)", name_district).groups()
+            district = district.lstrip("0")
+            key = name.split(" ")[-1] + "-" + district
+            leg = self.extra_info[key]
             leg["office_phone"] = next(
                 filter(
                     lambda string: re.match(r"\d{3}-\d{3}-\d{4}", string.strip()),
                     div.xpath(".//text()"),
                 )
             ).strip()
-            leg["url"] = main_link.get("href")
             leg["image"] = div.xpath(".//img/@src")[0]
-            if "mailto:" in email_link.get("href"):
-                leg["email"] = email_link.get("href").replace("mailto:", "")
+            if "mailto:" in email_link:
+                leg["email"] = email_link.replace("mailto:", "")
 
         logger = logging.getLogger("pupa")
         logger.info(
@@ -56,22 +57,30 @@ class SenList(CSV):
         if not row["First Name"]:
             return
         name = "{} {}".format(row["First Name"], row["Last Name"])
+        district = row["District"].lstrip("0")
+        key = "{}-{}".format(row["Last Name"].split(" ")[-1], district)
+        if key not in self.extra_info:
+            print(key)
+            print(list(self.extra_info.keys()))
+        extra_info = self.extra_info[key]
         party = PARTIES[row["Party"]]
+        print(f"{name} extra => {extra_info}")
         leg = Person(
             name=name,
-            district=row["District"].lstrip("0"),
+            district=district,
             party=party,
             primary_org="upper",
             role="Senator",
-            image=self.extra_info[name]["image"],
+            image=extra_info["image"],
         )
-        leg.add_link(self.extra_info[name]["url"])
+        if extra_info.get("url"):
+            leg.add_link(extra_info["url"])
         leg.add_contact_detail(
-            type="voice", value=self.extra_info[name]["office_phone"], note="capitol"
+            type="voice", value=extra_info["office_phone"], note="capitol"
         )
-        if "email" in self.extra_info[name]:
+        if "email" in extra_info:
             leg.add_contact_detail(
-                type="email", value=self.extra_info[name]["email"], note="capitol"
+                type="email", value=extra_info["email"], note="capitol"
             )
 
         row["Zipcode"] = row["Zipcode"].strip()
