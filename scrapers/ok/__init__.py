@@ -33,6 +33,8 @@ class Oklahoma(State):
             "_scraped_name": "2012 Special Session",
             "identifier": "2012SS1",
             "name": "2012 Special Session",
+            "start_date": "2012-06-01",
+            "end_date": "2012-06-02",
         },
         {
             "_scraped_name": "2014 Regular Session",
@@ -95,9 +97,12 @@ class Oklahoma(State):
             "identifier": "2020",
             "name": "2020 Regular Session",
             "start_date": "2019-02-03",
+            "end_date": "2020-05-22",
         },
     ]
     ignored_scraped_sessions = [
+        "2021 Regular Session",
+        "2020 Regular Session (web)",
         "2017 Regular Session",
         "2015 Regular Session",
         "2013 Regular Session",

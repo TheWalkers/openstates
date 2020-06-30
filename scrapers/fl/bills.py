@@ -223,6 +223,8 @@ class BillDetail(Page):
                     atype.append("reading-3")
                 elif action.startswith("Passed;"):
                     atype.append("passage")
+                elif action.startswith("Passed as amended"):
+                    atype.append("passage")
                 elif action.startswith("Adopted"):
                     atype.append("passage")
                 elif action.startswith("CS passed"):
@@ -452,7 +454,7 @@ class UpperComVote(PDF):
             bill=self.kwargs["bill"],
             chamber="upper",
             motion_text=motion,
-            classification="committee",
+            classification="committee-passage",
             result=result,
         )
         vote.add_source(self.url)
@@ -559,7 +561,7 @@ class HouseComVote(Page):
                 chamber="lower",
                 motion_text=motion,
                 result=result,
-                classification="committee",
+                classification="committee-passage",
             )
             vote.add_source(self.url)
             vote.set_count("yes", yes_count)

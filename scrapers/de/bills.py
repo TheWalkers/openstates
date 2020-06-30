@@ -238,9 +238,9 @@ class DEBillScraper(Scraper, LXMLMixin):
                 start_date=vote_date,
                 motion_text=vote_motion,
                 result=vote_passed,
-                classification="other",
                 bill=bill,
                 legislative_session=session,
+                classification=[],
             )
             vote_pdf_url = (
                 "https://legis.delaware.gov"

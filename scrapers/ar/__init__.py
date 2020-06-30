@@ -108,6 +108,7 @@ class Arkansas(State):
             "identifier": "2016S3",
             "name": "2016 Third Extraordinary Session",
             "start_date": "2016-05-19",
+            "end_date": "2016-05-23",
         },
         {
             "_scraped_name": "Regular Session, 2017",
@@ -152,10 +153,10 @@ class Arkansas(State):
         {
             "_scraped_name": "First Extraordinary Session, 2020",
             "classification": "special",
-            "end_date": "2020-03-20",
             "identifier": "2020S1",
             "name": "2020 First Extraordinary Session",
             "start_date": "2020-03-20",
+            "end_date": "2020-03-20",
         },
         {
             "_scraped_name": "Fiscal Session, 2020",
@@ -163,6 +164,7 @@ class Arkansas(State):
             "identifier": "2020F",
             "name": "2020 Fiscal Session",
             "start_date": "2020-04-08",
+            "end_date": "2020-04-09",
         },
     ]
     ignored_scraped_sessions = [
@@ -185,11 +187,11 @@ class Arkansas(State):
         "Regular Session, 1995",
         "First Extraordinary Session, 1995",
         "Regular Session, 1993",
-        "First Extraordinary Session, 1993",
-        "Second Extraordinary Session, 1993",
+        "First Extraordinary Session, 1994",
+        "Second Extraordinary Session, 1994",
         "Regular Session, 1991",
-        "First Extraordinary Session, 1991",
-        "Second Extraordinary Session, 1991",
+        "First Extraordinary Session, 1992",
+        "Second Extraordinary Session, 1992",
         "Regular Session, 1989",
         "First Extraordinary Session, 1989",
         "Second Extraordinary Session, 1989",
@@ -197,8 +199,8 @@ class Arkansas(State):
         "Regular Session, 1987",
         "First Extraordinary Session, 1987",
         "Second Extraordinary Session, 1987",
-        "Third Extraordinary Session, 1987",
-        "Fourth Extraordinary Session, 1987",
+        "Third Extraordinary Session, 1988",
+        "Fourth Extraordinary Session, 1988",
     ]
 
     def get_session_list(self):
