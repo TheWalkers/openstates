@@ -3,8 +3,8 @@ import datetime
 from itertools import chain
 
 from openstates.scrape import Person, Scraper
-from openstates.utils import LXMLMixin, validate_phone_number
-from openstates.utils.generic import convert_pdf
+from utils import LXMLMixin, validate_phone_number
+from openstates.utils import convert_pdf
 
 
 class NYPersonScraper(Scraper, LXMLMixin):
@@ -198,7 +198,7 @@ class NYPersonScraper(Scraper, LXMLMixin):
             yield from self.scrape_lower_chamber("lower")
 
     def scrape_upper_chamber(self, chamber):
-        url = "http://www.nysenate.gov/senators-committees"
+        url = "https://www.nysenate.gov/senators-committees"
 
         page = self.lxmlize(url)
 
