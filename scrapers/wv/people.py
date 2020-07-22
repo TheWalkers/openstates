@@ -6,7 +6,7 @@ from openstates.scrape import Person, Scraper
 
 import lxml.html
 
-from openstates.utils import validate_phone_number
+from utils import validate_phone_number
 
 
 class WVPersonScraper(Scraper):
