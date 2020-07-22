@@ -51,6 +51,7 @@ class VTPersonScraper(Scraper, LXMLMixin):
             )
             if state_email:
                 (state_email,) = state_email
+                state_email = state_email.replace("mailto:", "")
             else:
                 state_email = None
 
