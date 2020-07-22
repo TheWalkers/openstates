@@ -1,7 +1,7 @@
 import re
 
 from openstates.scrape import Person, Scraper
-from openstates.utils import LXMLMixin, validate_phone_number, validate_email_address
+from utils import LXMLMixin, validate_phone_number, validate_email_address
 import xlrd
 
 excel_mapping = {
