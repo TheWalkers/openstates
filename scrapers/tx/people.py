@@ -129,7 +129,6 @@ class TXPersonScraper(Scraper, LXMLMixin):
         # Example: view-source:https://senate.texas.gov/member.php?d=1
         member_page = self.lxmlize(url)
 
-        photo_url = member_page.xpath('//img[@id="memhead"]/@src')[0]
         scraped_name_district_text = member_page.xpath(
             '//div[@class="pgtitle"]/text()'
         )[0]
@@ -137,8 +136,9 @@ class TXPersonScraper(Scraper, LXMLMixin):
         name = " ".join(scraped_name.replace("Senator ", "").split()).strip()
         district = str(district_text.split()[1]).strip()
         # Vacant house "members" are named after their district numbers:
-        if re.match(r"^District \d+$", name):
+        if re.match(r"^District \d+$", name) or name == "Constituent Services":
             return None
+        photo_url = member_page.xpath('//img[@id="memhead"]/@src')[0]
         bio = " ".join(member_page.xpath('//div[@class="bio"]/text()'))
         party = parties[district]
 
