@@ -74,6 +74,11 @@ class MSLegislatorScraper(Scraper):
             url_root = os.path.dirname(url)
             details_page = self.get(url)
             root = lxml.etree.fromstring(details_page.content)
+
+            detail = root.xpath("string(//DETAIL)") or ""
+            if "retired" in detail or "resigned" in detail:
+                return
+
             party = root.xpath("string(//PARTY)")
 
             district = root.xpath("string(//DISTRICT)")
