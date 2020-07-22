@@ -32,7 +32,7 @@ class SenList(CSV):
         for div in doc.xpath(xpath):
             email_link = div.xpath(".//a/@href")[0]
             #name = main_link.text_content().split(" (")[0]
-            name_district = div.xpath(".//h5/b")[0].text_content()
+            name_district = div.xpath(".//h5/a/b")[-1].text_content()
             name, district, party = re.match(r"([\w. ]+) \((\d+), (\w+)\)", name_district).groups()
             district = district.lstrip("0")
             key = name.split(" ")[-1] + "-" + district
