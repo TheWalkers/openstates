@@ -55,6 +55,10 @@ class SDLegislatorScraper(Scraper):
         page = lxml.html.fromstring(page)
         page.make_links_absolute(url)
 
+        inactive = page.xpath("string(//span[contains(@id, 'Inactive')])").lower() or ""
+        if "resigned" in inactive or "deceased" in inactive:
+            return
+
         party = page.xpath("string(//span[contains(@id, 'Party')])")
         party = party.strip()
 
