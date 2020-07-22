@@ -83,7 +83,7 @@ class ARLegislatorScraper(Scraper):
         # info_box = root.xpath('string(//div[@id="bodyContent"]/div[2]/div[2])')
         try:
             district = root.xpath(
-                'string(//div[@id="bodyContent"]/div[2]/div[2]/div[3]/div[2])'
+                'string(//div[@id="bodyContent"]/div[2]/div[2]/div[3]/div[3])'
             )
         except AttributeError:
             self.warning("Member has no district listed; skipping them")
@@ -126,11 +126,11 @@ class ARLegislatorScraper(Scraper):
 
         try:
             occupation_check = root.xpath(
-                'string(//div[@id="bodyContent"]/div[2]/div[2]/div[5]/div[1]/b)'
+                'string(//div[@id="bodyContent"]/div[2]/div[2]/div[5]/div[2]/b)'
             )
             if occupation_check == "Occupation:":
                 person.extras["occupation"] = root.xpath(
-                    'string(//div[@id="bodyContent"]/div[2]/div[2]/div[5]/div[2])'
+                    'string(//div[@id="bodyContent"]/div[2]/div[2]/div[5]/div[3])'
                 )
             else:
                 raise AttributeError
