@@ -320,10 +320,13 @@ class CAPersonScraper(Scraper):
             "USN",
             "USNR",
         ]
-        if any(check in name for check in suffix):
-            last_name = re.split(r"\s+", name)[-2].lower()
-        else:
-            last_name = re.split(r"\s+", name)[-1].lower()
+        names = re.split(r"\s+", name)
+        last_name = names[-1]
+        if last_name in suffix:
+            last_name = names[-2]
+        if name == "Tasha Boerner Horvath":  # a special case
+            last_name = "boenerhorvath"
+        last_name = last_name.lower()
         # translate accents to non-accented versions for use in an
         # email and drop apostrophes
         last_name = "".join(
